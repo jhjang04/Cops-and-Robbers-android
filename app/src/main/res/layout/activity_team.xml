@@ -59,7 +59,7 @@
             android:layout_width="132dp">
 
             <Button
-                android:text="<<"
+                android:text="Cop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnCop"
@@ -69,7 +69,7 @@
                 android:background="@android:color/background_light" />
 
             <Button
-                android:text=">>"
+                android:text="Robber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnRobber"
