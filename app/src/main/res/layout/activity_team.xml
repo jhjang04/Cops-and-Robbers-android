@@ -10,20 +10,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="car.adroid.com.TeamActivity">
 
-    <TextView
-        android:text="Cop"
+    <Button
+        android:text="Ready/Start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView6"
-        android:textSize="24sp"
-        android:textColor="@android:color/black"
-        android:textStyle="normal|bold"
-        android:layout_marginLeft="95dp"
-        android:layout_marginStart="96dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="35dp" />
+        android:id="@+id/btnStart"
+        android:background="@android:color/background_light"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:text="Robber"
@@ -33,43 +27,59 @@
         android:textSize="24sp"
         android:textColor="@android:color/black"
         android:textStyle="normal|bold"
-        android:layout_marginRight="95dp"
-        android:layout_marginEnd="94dp"
         android:layout_alignBaseline="@+id/textView6"
         android:layout_alignBottom="@+id/textView6"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="35dp" />
+        android:layout_marginRight="50dp"
+        android:layout_marginEnd="50dp" />
+
+    <TextView
+        android:text="Cop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView6"
+        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        android:textStyle="normal|bold"
+        android:layout_marginTop="7dp"
+        android:layout_marginRight="31dp"
+        android:layout_marginEnd="31dp"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/btnStart"
+        android:layout_toStartOf="@+id/btnStart" />
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="500dp"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
-        android:layout_marginBottom="60dp">
+        android:layout_marginTop="14dp"
+        android:layout_below="@+id/textView7"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="80dp">
 
         <ListView android:layout_height="match_parent"
-            android:layout_width="220dp"
-            android:id="@+id/listCop" />
+            android:id="@+id/listCop"
+            android:layout_width="120dp" />
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_height="match_parent"
-            android:layout_width="132dp">
+            android:layout_width="85dp">
 
             <Button
-                android:text="Cop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnCop"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="100dp"
-                android:background="@android:color/background_light" />
+                android:background="@android:color/background_light"
+                android:text="◁" />
 
             <Button
-                android:text="Robber"
+                android:text="▷"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnRobber"
@@ -81,19 +91,10 @@
         </LinearLayout>
 
         <ListView
-            android:layout_width="220dp"
             android:layout_height="match_parent"
-            android:id="@+id/listRobber" />
+            android:id="@+id/listRobber"
+            android:layout_width="120dp" />
 
     </LinearLayout>
-
-    <Button
-        android:text="Ready/Start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnStart"
-        android:background="@android:color/background_light"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

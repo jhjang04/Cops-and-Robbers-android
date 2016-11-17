@@ -9,7 +9,7 @@ import android.widget.ListView;
 
 public class TeamActivity extends AppCompatActivity {
 
-    private Button btnCop, btnRobber,btnStart;
+    private Button btnToCop, btnToRobber,btnStart;
     private ListView listCop, listRobber;
 
     private Boolean IsListFocused(){
@@ -24,13 +24,13 @@ public class TeamActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team);
 
-        btnCop = (Button)findViewById(R.id.btnCop);
-        btnRobber = (Button)findViewById(R.id.btnRobber);
+        btnToCop = (Button)findViewById(R.id.btnCop);
+        btnToRobber = (Button)findViewById(R.id.btnRobber);
         btnStart = (Button)findViewById(R.id.btnStart);
         listCop = (ListView)findViewById(R.id.listCop);
         listRobber = (ListView)findViewById(R.id.listRobber);
 
-        btnCop.setOnClickListener(new View.OnClickListener(){
+        btnToCop.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 //if(IsListFocused())
@@ -38,7 +38,7 @@ public class TeamActivity extends AppCompatActivity {
             }
         });
 
-        btnRobber.setOnClickListener(new View.OnClickListener(){
+        btnToRobber.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 //if(IsListFocused())
@@ -49,7 +49,8 @@ public class TeamActivity extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(TeamActivity.this, GameActivity.class);
+                startActivity(intent);
             }
         });
     }
