@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -10,62 +11,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="car.adroid.com.MainActivity">
 
-    <TextView
-        android:text="Cops and Robbers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="62dp"
-        android:id="@+id/textView"
-        android:textSize="30sp"
-        android:textColor="@android:color/black"
-        android:textStyle="normal|bold" />
-
-    <TextView
-        android:text="Serial Number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"
-        android:layout_alignBaseline="@+id/txtRoomNum"
-        android:layout_alignBottom="@+id/txtRoomNum"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:layout_marginTop="65dp"
-        android:id="@+id/txtRoomNum"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:text="Enter 4 digits"
-        android:layout_marginRight="20dp"
-        android:layout_alignLeft="@+id/txtName"
-        android:layout_alignStart="@+id/txtName" />
-
-    <Button
-        android:text="CREATE"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/textView"
-        android:layout_alignStart="@+id/textView"
-        android:layout_marginBottom="101dp"
-        android:id="@+id/btnCreate"
-        android:background="@android:color/background_light" />
-
     <Button
         android:text="JOIN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btnJoin"
-        android:background="@android:color/background_light"
+        android:background="@drawable/button_border"
         android:layout_alignBaseline="@+id/btnCreate"
         android:layout_alignBottom="@+id/btnCreate"
         android:layout_alignRight="@+id/textView"
@@ -74,7 +25,7 @@
     <TextView
         android:text="Name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_below="@+id/textView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -84,16 +35,64 @@
         android:textColor="@android:color/black"
         android:layout_marginLeft="30dp" />
 
-    <EditText
+    <Button
+        android:text="CREATE"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="101dp"
+        android:id="@+id/btnCreate"
+        android:background="@drawable/button_border"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:textColor="@android:color/black" />
+
+    <EditText
+        android:layout_width="wrap_content"
         android:inputType="textPersonName"
         android:text="Enter nickname"
+        android:background="@drawable/text_border"
         android:ems="10"
-        android:layout_below="@+id/textView"
-        android:layout_marginTop="19dp"
         android:id="@+id/txtName"
         android:textSize="18sp"
+        android:layout_alignBaseline="@+id/textView3"
+        android:layout_alignBottom="@+id/textView3"
         android:layout_toRightOf="@+id/btnCreate"
-        android:layout_marginRight="20dp" />
+        android:layout_toEndOf="@+id/btnCreate"
+        android:layout_height="30dp" />
+
+    <EditText
+        android:layout_height="30dp"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_marginTop="18dp"
+        android:id="@+id/txtRoomNum"
+        android:text="Enter 4 digits"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/txtName"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="Serial Number"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:id="@+id/textView2"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:layout_alignTop="@+id/txtRoomNum"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Cops and Robbers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:id="@+id/textView"
+        android:textSize="30sp"
+        android:textColor="@android:color/black"
+        android:textStyle="normal|bold"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

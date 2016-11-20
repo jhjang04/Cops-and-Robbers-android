@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_team"
     android:layout_width="match_parent"
@@ -12,12 +13,12 @@
 
     <Button
         android:text="Ready/Start"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btnStart"
-        android:background="@android:color/background_light"
+        android:background="@drawable/button_border"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_width="110dp" />
 
     <TextView
         android:text="Robber"
@@ -61,6 +62,7 @@
 
         <ListView android:layout_height="match_parent"
             android:id="@+id/listCop"
+            android:background="@drawable/text_border"
             android:layout_width="120dp" />
 
         <LinearLayout
@@ -75,7 +77,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="100dp"
-                android:background="@android:color/background_light"
+                android:background="@drawable/button_border"
                 android:text="◁" />
 
             <Button
@@ -87,12 +89,13 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="60dp"
                 android:layout_marginTop="70dp"
-                android:background="@android:color/background_light" />
+                android:background="@drawable/button_border" />
         </LinearLayout>
 
         <ListView
             android:layout_height="match_parent"
             android:id="@+id/listRobber"
+            android:background="@drawable/text_border"
             android:layout_width="120dp" />
 
     </LinearLayout>
