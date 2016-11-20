@@ -9,7 +9,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="car.adroid.com.TeamActivity">
+    tools:context="car.adroid.com.TeamActivity"
+    android:background="@android:color/background_light">
 
     <Button
         android:text="Ready/Start"
@@ -18,7 +19,8 @@
         android:background="@drawable/button_border"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_width="110dp" />
+        android:layout_width="110dp"
+        android:textColor="@android:color/black" />
 
     <TextView
         android:text="Robber"
@@ -58,7 +60,8 @@
         android:layout_below="@+id/textView7"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="80dp">
+        android:layout_marginBottom="80dp"
+        android:background="@android:color/background_light">
 
         <ListView android:layout_height="match_parent"
             android:id="@+id/listCop"
@@ -68,7 +71,8 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_height="match_parent"
-            android:layout_width="85dp">
+            android:layout_width="85dp"
+            android:background="@android:color/background_light">
 
             <Button
                 android:layout_width="match_parent"
@@ -78,7 +82,8 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="100dp"
                 android:background="@drawable/button_border"
-                android:text="◁" />
+                android:text="◁"
+                android:textColor="@android:color/black" />
 
             <Button
                 android:text="▷"
@@ -89,7 +94,8 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="60dp"
                 android:layout_marginTop="70dp"
-                android:background="@drawable/button_border" />
+                android:background="@drawable/button_border"
+                android:textColor="@android:color/black" />
         </LinearLayout>
 
         <ListView

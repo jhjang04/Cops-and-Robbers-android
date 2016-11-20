@@ -9,7 +9,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="car.adroid.com.MainActivity">
+    tools:context="car.adroid.com.MainActivity"
+    android:background="@android:color/background_light">
 
     <Button
         android:text="JOIN"
@@ -20,7 +21,8 @@
         android:layout_alignBaseline="@+id/btnCreate"
         android:layout_alignBottom="@+id/btnCreate"
         android:layout_alignRight="@+id/textView"
-        android:layout_alignEnd="@+id/textView" />
+        android:layout_alignEnd="@+id/textView"
+        android:textColor="@android:color/black" />
 
     <TextView
         android:text="Name"
@@ -29,7 +31,7 @@
         android:layout_below="@+id/textView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="31dp"
+        android:layout_marginTop="50dp"
         android:id="@+id/textView3"
         android:textSize="18sp"
         android:textColor="@android:color/black"
@@ -37,15 +39,15 @@
 
     <Button
         android:text="CREATE"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="101dp"
+        android:layout_marginBottom="130dp"
         android:id="@+id/btnCreate"
         android:background="@drawable/button_border"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/textView"
         android:layout_alignStart="@+id/textView"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/black"
+        android:layout_width="100dp" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -59,40 +61,43 @@
         android:layout_alignBottom="@+id/textView3"
         android:layout_toRightOf="@+id/btnCreate"
         android:layout_toEndOf="@+id/btnCreate"
-        android:layout_height="30dp" />
-
-    <EditText
         android:layout_height="30dp"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:layout_marginTop="18dp"
-        android:id="@+id/txtRoomNum"
-        android:text="Enter 4 digits"
-        android:layout_width="wrap_content"
-        android:layout_below="@+id/txtName"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:text="Serial Number"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:id="@+id/textView2"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"
-        android:layout_alignTop="@+id/txtRoomNum"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:textColor="@android:color/black" />
 
     <TextView
         android:text="Cops and Robbers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="100dp"
         android:id="@+id/textView"
         android:textSize="30sp"
         android:textColor="@android:color/black"
         android:textStyle="normal|bold"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="Room Number"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:id="@+id/textView2"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_height="30dp"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/txtRoomNum"
+        android:text="Enter 4 digits"
+        android:background="@drawable/text_border"
+        android:layout_alignTop="@+id/textView2"
+        android:layout_alignLeft="@+id/txtName"
+        android:layout_alignStart="@+id/txtName"
+        android:textColor="@android:color/black"
+        android:layout_width="120dp" />
 </RelativeLayout>

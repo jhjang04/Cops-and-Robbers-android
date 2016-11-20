@@ -8,7 +8,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="car.adroid.com.GameActivity">
+    tools:context="car.adroid.com.GameActivity"
+    android:background="@android:color/background_light">
 
     <TextView
         android:text="1:00:00"
@@ -43,7 +44,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_height="80dp">
+        android:layout_height="80dp"
+        android:background="@android:color/background_light">
 
         <Button
             android:text="Team Chat"
