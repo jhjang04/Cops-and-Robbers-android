@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 public class GameActivity extends FragmentActivity {
 
-    private Button btnTeamChat, btnGlobalChat, btnChance;
+    private Button btnTeamChat, btnGlobalChat, btnUserlist;
     private TextView tvTime;
 
     @Override
@@ -20,7 +20,7 @@ public class GameActivity extends FragmentActivity {
 
         btnTeamChat = (Button)findViewById(R.id.btnTeamChat);
         btnGlobalChat = (Button)findViewById(R.id.btnGlobalChat);
-        btnChance = (Button)findViewById(R.id.btnChance);
+        btnUserlist = (Button)findViewById(R.id.btnUserlist);
         tvTime = (TextView)findViewById(R.id.tvTime);
 
         btnTeamChat.setOnClickListener(new View.OnClickListener(){
@@ -39,7 +39,7 @@ public class GameActivity extends FragmentActivity {
             }
         });
 
-        btnChance.setOnClickListener(new View.OnClickListener(){
+        btnUserlist.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 // show all players on the map

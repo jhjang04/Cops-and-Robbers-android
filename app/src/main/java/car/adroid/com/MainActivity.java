@@ -4,19 +4,42 @@ import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.KeyListener;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity {
-    private Button btnCreate, btnJoin;
-    private EditText txtRoomNumber,txtName;
-    private String roomNum;
+    private Button btnNext;
+    private EditText txtRoomNumber,txtName, txtPwd;
+    private RadioButton rdCreate, rdJoin;
 
-    private Boolean IsRoomNumber(){
-        if ( txtRoomNumber.getText().toString().length() == 0 ) {
+    private String userName;
+    private String roomNum;
+    private String roomPwd;
+    private  KeyListener pwdKeyListener;
+    // 방 번호는 1~10000 사이의 숫자
+    // 캐릭터가 섞여있으면 false
+    // 10000이 넘는 숫자일 경우 false
+    private Boolean IsRoomNumProper(){
+        if ( roomNum.length() == 0 ) {
+            // 아닐경우에 대한 적절한 처리
+            return false;
+        } else {
+            return true;
+        }
+    }
+    // 공백일 경우 false
+    // 방 비밀번호와 일치하지 않을경우 false
+    private Boolean IsPwdProper(){
+        if ( roomPwd.length() == 0 ) {
             // 아닐경우에 대한 적절한 처리
             return false;
         } else {
@@ -24,8 +47,21 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private void GetRoomNumber(){
+    // 이미 존재하는 유저의 닉네임일 경우 false
+    private Boolean IsUserNameProper(){
+        if ( userName.length() == 0 ) {
+            // 아닐경우에 대한 적절한 처리
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // 값을 받아온다.
+    private void SetUserInfo(){
+        userName = txtName.getText().toString();
         roomNum = txtRoomNumber.getText().toString();
+        roomPwd = txtPwd.getText().toString();
     }
 
     @Override
@@ -35,31 +71,67 @@ public class MainActivity extends FragmentActivity {
 
         txtName = (EditText)findViewById(R.id.txtName);
         txtRoomNumber = (EditText)findViewById(R.id.txtRoomNum);
-        btnCreate = (Button)findViewById(R.id.btnCreate);
-        btnJoin = (Button)findViewById(R.id.btnJoin);
+        txtPwd = (EditText)findViewById(R.id.txtPwd);
+        btnNext = (Button)findViewById(R.id.btnNext);
+        rdCreate = (RadioButton)findViewById(R.id.rdCreate);
+        rdJoin = (RadioButton)findViewById(R.id.rdJoin);
+        rdCreate.setChecked(true);
 
-        btnCreate.setOnClickListener(new View.OnClickListener(){
+        pwdKeyListener = txtPwd.getKeyListener();
+        txtPwd.setKeyListener(null);
+
+
+        // hide keyboard when touching background
+        findViewById(R.id.activity_main).setOnTouchListener(new View.OnTouchListener(){
             @Override
-            public void onClick(View view) {
-                if(IsRoomNumber())
-                    GetRoomNumber();
-
-                Intent intent = new Intent(MainActivity.this, TeamActivity.class);
-                // intent에 Name을 담아 전달
-                startActivity(intent);
-        }
-        });
-
-        btnJoin.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                if(IsRoomNumber())
-                    GetRoomNumber();
-
-                Intent intent = new Intent(MainActivity.this, TeamActivity.class);
-                startActivity(intent);
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                return false;
             }
         });
 
+
+        rdCreate.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                txtPwd.setText(null);
+                txtPwd.setKeyListener(null);
+            }
+        });
+
+        rdJoin.setOnClickListener(new RadioButton.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                txtPwd.setKeyListener(pwdKeyListener);
+            }
+        });
+
+        btnNext.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                SetUserInfo();
+
+                // 예외 상황에 맞게 toast
+                // 존재하는 방 번호를 입력했는지
+                if(IsRoomNumProper()){
+
+                }
+                // 공백으로 처리된건 아닌지
+                else if(IsPwdProper()){
+
+                }
+                // 방 안에 이미 존재하는 닉네임인지
+                else if(IsUserNameProper()){
+
+                }
+                else{
+                    Intent intent = new Intent(MainActivity.this, TeamActivity.class);
+                    // intent에 Name을 담아 전달
+                    intent.putExtra("name", userName);
+                    startActivity(intent);
+                }
+        }
+        });
     }
 }

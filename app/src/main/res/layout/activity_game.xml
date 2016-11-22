@@ -66,8 +66,8 @@
             android:layout_marginLeft="10dp" />
 
         <Button
-            android:text="Chance"
-            android:id="@+id/btnChance"
+            android:text="USER LIST"
+            android:id="@+id/btnUserlist"
             android:background="@drawable/button_border"
             android:textColor="@android:color/black"
             android:layout_width="100dp"
