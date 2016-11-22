@@ -64,22 +64,25 @@ public class MainActivity extends FragmentActivity {
         roomPwd = txtPwd.getText().toString();
     }
 
+    private void InitVariables(){
+        // mapping variables with id
+        // editText for getting userInfo
+        txtName = (EditText)findViewById(R.id.txtName);
+        txtRoomNumber = (EditText)findViewById(R.id.txtRoomNum);
+        txtPwd = (EditText)findViewById(R.id.txtPwd);
+
+        // button for next activity
+        btnNext = (Button)findViewById(R.id.btnNext);
+
+        // Radio Button for 2 mode (create room / join room)
+        rdCreate = (RadioButton)findViewById(R.id.rdCreate);
+        rdJoin = (RadioButton)findViewById(R.id.rdJoin);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        txtName = (EditText)findViewById(R.id.txtName);
-        txtRoomNumber = (EditText)findViewById(R.id.txtRoomNum);
-        txtPwd = (EditText)findViewById(R.id.txtPwd);
-        btnNext = (Button)findViewById(R.id.btnNext);
-        rdCreate = (RadioButton)findViewById(R.id.rdCreate);
-        rdJoin = (RadioButton)findViewById(R.id.rdJoin);
-        rdCreate.setChecked(true);
-
-        pwdKeyListener = txtPwd.getKeyListener();
-        txtPwd.setKeyListener(null);
-
 
         // hide keyboard when touching background
         findViewById(R.id.activity_main).setOnTouchListener(new View.OnTouchListener(){
@@ -91,7 +94,14 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+        InitVariables();
 
+        rdCreate.setChecked(true);
+        pwdKeyListener = txtPwd.getKeyListener();
+        txtPwd.setKeyListener(null);
+
+
+        // After creating a room, server will give pwd itself, so no need to enter pwd
         rdCreate.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -100,6 +110,7 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+        // enable pwd editText
         rdJoin.setOnClickListener(new RadioButton.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -112,25 +123,28 @@ public class MainActivity extends FragmentActivity {
             public void onClick(View view) {
                 SetUserInfo();
 
+                /*
                 // 예외 상황에 맞게 toast
-                // 존재하는 방 번호를 입력했는지
-                if(IsRoomNumProper()){
-
-                }
-                // 공백으로 처리된건 아닌지
-                else if(IsPwdProper()){
-
-                }
                 // 방 안에 이미 존재하는 닉네임인지
-                else if(IsUserNameProper()){
+                if(!IsUserNameProper()){
+
+                }
+                // 존재하는 방 번호를 입력했는지
+                else if(!IsRoomNumProper()){
+
+                }
+                else if( !IsPwdProper() & rdJoin.isChecked()){
 
                 }
                 else{
-                    Intent intent = new Intent(MainActivity.this, TeamActivity.class);
-                    // intent에 Name을 담아 전달
-                    intent.putExtra("name", userName);
-                    startActivity(intent);
+
                 }
+                */
+
+                Intent intent = new Intent(MainActivity.this, TeamActivity.class);
+                // intent에 Name을 담아 전달
+                intent.putExtra("name", userName);
+                startActivity(intent);
         }
         });
     }
