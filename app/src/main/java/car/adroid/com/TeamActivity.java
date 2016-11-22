@@ -81,7 +81,6 @@ public class TeamActivity extends FragmentActivity {
                 // 리스트의 아이템 이동
                 if(IsMovable(listRobber))
                     MoveToList(listRobber,listCop);
-
             }
         });
 
