@@ -1,6 +1,7 @@
 package car.adroid.com;
 
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,13 +11,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.MapView;
 import com.nhn.android.maps.NMapActivity;
+import com.nhn.android.maps.NMapCompassManager;
 import com.nhn.android.maps.NMapController;
+import com.nhn.android.maps.NMapLocationManager;
 import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.maplib.NGeoPoint;
 import com.nhn.android.maps.nmapmodel.NMapError;
+import com.nhn.android.maps.overlay.NMapPOIdata;
+import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
+import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
+import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,12 +52,24 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
     private NMapController mMapController = null;
     private LinearLayout MapContainer;
 
+    //지도 위 오버레이 객체 드로잉에 필요한 리소스 데이터 제공 클래스
+    private NMapViewerResourceProvider mMapViewerResourceProvider;
+    //오버레이 객체 관리 클래스
+    private NMapOverlayManager mOverlayManager;
+    //POI 아이템 선택 상태 변경 시 호출퇴는 콜백 인터페이스
+    private NMapPOIdataOverlay.OnStateChangeListener onPOIdataStateChangeListener;
+
+    private NMapMyLocationOverlay mMyLocationOverlay; //지도 위에 현재 위치를 표시하는 오버레이 클래스
+    private NMapLocationManager mMapLocationManager; //단말기의 현재 위치 탐색 기능 사용 클래스
+    private NMapCompassManager mMapCompassManager; //단말기의 나침반 기능 사용 클래스
+
+
+
     @Override
-    public void onMapInitHandler(NMapView mapView, NMapError errorInfo){
-        if (errorInfo == null){
+    public void onMapInitHandler(NMapView mapView, NMapError errorInfo) {
+        if (errorInfo == null) {
             mMapController.setMapCenter(new NGeoPoint(126.978371, 37.566691), 11);
-        }
-        else{
+        } else {
             android.util.Log.e("NMAP", "onMapInitHandler: error=" + errorInfo.toString());
         }
     }
@@ -104,18 +124,87 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
     }
 
+    private void testOverlayMaker() { //오버레이 아이템 추가 함수
+        int markerId = NMapPOIflagType.PIN; //마커 id설정
+        // POI 아이템 관리 클래스 생성(전체 아이템 수, NMapResourceProvider 상속 클래스)
+        NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider);
+        poiData.beginPOIdata(2); // POI 아이템 추가 시작
+        poiData.addPOIitem(127.081667, 37.242222, "marker1", markerId, 0);
+        poiData.addPOIitem(127.081767, 37.242322, "marker2", markerId, 0);
+        poiData.endPOIdata(); // POI 아이템 추가 종료
+        //POI data overlay 객체 생성(여러 개의 오버레이 아이템을 포함할 수 있는 오버레이 클래스)
+        NMapPOIdataOverlay poiDataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
+        poiDataOverlay.showAllPOIdata(0); //모든 POI 데이터를 화면에 표시(zomLevel)
+        //POI 아이템이 선택 상태 변경 시 호출되는 콜백 인터페이스 설정
+        poiDataOverlay.setOnStateChangeListener(onPOIdataStateChangeListener);
+    }
+
+    private final NMapLocationManager.OnLocationChangeListener onMyLocationChangeListener =
+            new NMapLocationManager.OnLocationChangeListener() { //위치 변경 콜백 인터페이스 정의
+                //위치가 변경되면 호출
+                @Override
+                public boolean onLocationChanged(NMapLocationManager locationManager, NGeoPoint myLocation) {
+                    if (mMapController != null) {
+                        mMapController.animateTo(myLocation); //지도 중심을 현재 위치로 이동
+                    }
+                    return true;
+                }
+                //정해진 시간 내에 위치 탐색 실패 시 호출
+                @Override
+                public void onLocationUpdateTimeout(NMapLocationManager locationManager) {
+                }
+                //현재 위치가 지도 상에 표시할 수 있는 범위를 벗어나는 경우 호출
+                @Override
+                public void onLocationUnavailableArea(NMapLocationManager locationManager, NGeoPoint myLocation) {
+                    stopMyLocation(); //내 위치 찾기 중지 함수 호출
+                }
+            };
+
+    private void startMyLocation() {
+        if (mMapLocationManager.isMyLocationEnabled()) { //현재 위치를 탐색 중인지 확인
+            if (!mMapView.isAutoRotateEnabled()) { //지도 회전기능 활성화 상태 여부 확인
+                mMyLocationOverlay.setCompassHeadingVisible(true); //나침반 각도 표시
+                mMapCompassManager.enableCompass(); //나침반 모니터링 시작
+                mMapView.setAutoRotateEnabled(true, false); //지도 회전기능 활성화
+            }
+            mMapView.invalidate();
+        } else { //현재 위치를 탐색 중이 아니면
+            Boolean isMyLocationEnabled = mMapLocationManager.enableMyLocation(false); //현재 위치 탐색 시작
+            if (!isMyLocationEnabled) { //위치 탐색이 불가능하면
+                Toast.makeText(GameActivity.this, "Please enable a My Location source in system settings",
+                        Toast.LENGTH_LONG).show();
+                Intent goToSettings = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(goToSettings);
+                return;
+            }
+        }
+    }
+
+    private void stopMyLocation() {
+        mMapLocationManager.disableMyLocation(); //현재 위치 탐색 종료
+        if (mMapView.isAutoRotateEnabled()) { //지도 회전기능이 활성화 상태라면
+            mMyLocationOverlay.setCompassHeadingVisible(false); //나침반 각도표시 제거
+            mMapCompassManager.disableCompass(); //나침반 모니터링 종료
+            mMapView.setAutoRotateEnabled(false, false); //지도 회전기능 중지
+        }
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        btnTeamChat = (Button)findViewById(R.id.btnTeamChat);
-        btnGlobalChat = (Button)findViewById(R.id.btnGlobalChat);
-        btnUserlist = (Button)findViewById(R.id.btnUserlist);
-        tvTime = (TextView)findViewById(R.id.tvTime);
+        btnTeamChat = (Button) findViewById(R.id.btnTeamChat);
+        btnGlobalChat = (Button) findViewById(R.id.btnGlobalChat);
+        btnUserlist = (Button) findViewById(R.id.btnUserlist);
 
+        // 남은 시간 출력해주는 textView -> 추후 Service에서 시간이 줄어들도록 구현해야함
+        tvTime = (TextView) findViewById(R.id.tvTime);
+
+        // 지도 출력
         MapContainer = (LinearLayout) findViewById(R.id.nmap);
-
         mMapView = new NMapView(this);
         mMapView.setClientId(CLIENT_ID);
         mMapView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
@@ -124,11 +213,26 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         mMapView.setClickable(true);
         mMapView.setOnMapStateChangeListener(this);
         mMapView.setOnMapViewTouchEventListener(this);
-        mMapView.setBuiltInZoomControls(true, null);
+        //mMapView.setBuiltInZoomControls(true, null);
         mMapController = mMapView.getMapController();
 
+        // 마커 생성
+        mMapViewerResourceProvider = new NMapViewerResourceProvider(this);
+        mOverlayManager = new NMapOverlayManager(this, mMapView, mMapViewerResourceProvider);
+        testOverlayMaker();
 
-        btnTeamChat.setOnClickListener(new View.OnClickListener(){
+        // 현재 위치 표시
+        //위치 관리 메니저 객체 생성
+        mMapLocationManager = new NMapLocationManager(this);
+         //현재 위치 변경 시 호출되는 콜백 인터페이스를 설정한다.
+        mMapLocationManager.setOnLocationChangeListener(onMyLocationChangeListener);
+         //NMapMyLocationOverlay 객체 생성
+        mMyLocationOverlay = mOverlayManager.createMyLocationOverlay(mMapLocationManager,
+                mMapCompassManager);
+        startMyLocation(); //내 위치 찾기 함수 호출
+
+
+        btnTeamChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(GameActivity.this, TeamChat.class);
@@ -136,7 +240,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
             }
         });
 
-        btnGlobalChat.setOnClickListener(new View.OnClickListener(){
+        btnGlobalChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(GameActivity.this, GlobalChat.class);
@@ -144,7 +248,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
             }
         });
 
-        btnUserlist.setOnClickListener(new View.OnClickListener(){
+        btnUserlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // show all players on the map
