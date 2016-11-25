@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="car.adroid.com">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -15,10 +19,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TeamActivity"/>
+        <activity android:name=".TeamActivity" />
         <activity android:name=".GameActivity" />
         <activity android:name=".TeamChat" />
-        <activity android:name=".GlobalChat"></activity>
+        <activity android:name=".GlobalChat" />
+
+        <service
+            android:name="car.adroid.service.LocationService"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service
+            android:name="car.adroid.service.HttpDataAccessService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
