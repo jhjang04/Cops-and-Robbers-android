@@ -18,6 +18,7 @@ import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapCompassManager;
 import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapLocationManager;
+import com.nhn.android.maps.NMapOverlayItem;
 import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.maplib.NGeoPoint;
 import com.nhn.android.maps.nmapmodel.NMapError;
@@ -51,6 +52,9 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
     private NMapView mMapView = null;
     private NMapController mMapController = null;
     private LinearLayout MapContainer;
+
+    //private NMapOverlayItem a;
+
 
     //지도 위 오버레이 객체 드로잉에 필요한 리소스 데이터 제공 클래스
     private NMapViewerResourceProvider mMapViewerResourceProvider;
@@ -125,12 +129,13 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
     }
 
     private void testOverlayMaker() { //오버레이 아이템 추가 함수
-        int markerId = NMapPOIflagType.PIN; //마커 id설정
+        int markerAlly = NMapPOIflagType.ALLY; //마커 id설정
+        int markerOpponent = NMapPOIflagType.OPPONENT;
         // POI 아이템 관리 클래스 생성(전체 아이템 수, NMapResourceProvider 상속 클래스)
         NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider);
         poiData.beginPOIdata(2); // POI 아이템 추가 시작
-        poiData.addPOIitem(127.081667, 37.242222, "marker1", markerId, 0);
-        poiData.addPOIitem(127.081767, 37.242322, "marker2", markerId, 0);
+        poiData.addPOIitem(127.081667, 37.242222, "marker1", markerAlly, 0);
+        poiData.addPOIitem(127.081867, 37.242322, "marker2", markerOpponent, 0);
         poiData.endPOIdata(); // POI 아이템 추가 종료
         //POI data overlay 객체 생성(여러 개의 오버레이 아이템을 포함할 수 있는 오버레이 클래스)
         NMapPOIdataOverlay poiDataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
