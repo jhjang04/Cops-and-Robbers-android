@@ -27,9 +27,13 @@
         <service
             android:name="car.adroid.service.LocationService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
         <service
-            android:name="car.adroid.service.HttpDataAccessService"
+            android:name="car.adroid.service.TeamSelectHttpService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name="car.adroid.service.InGameHttpService"
             android:enabled="true"
             android:exported="true"></service>
     </application>
