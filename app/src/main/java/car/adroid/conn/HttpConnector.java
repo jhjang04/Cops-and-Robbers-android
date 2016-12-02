@@ -74,29 +74,37 @@ public class HttpConnector extends abstractConnector{
     }
 
     @Override
-    public void makeRoom(String strPwd , String strNick) {
+    public JSONObject makeRoom(String strPwd , String strNick) {
         Map<String , String> mapParam = new HashMap<String , String>();
         mapParam.put("pwd" , strPwd);
         mapParam.put("nick" , strNick);
+
         try {
             JSONObject json = HttpConnector.SimpleRequest("makeRoom" , mapParam);
-            String strRst = json.getString("result");
-            int iRoomNo = json.getInt("room_no");
+//            String strRst = json.getString("result");
+//            int iRoomNo = json.getInt("room_no");
+//            int iUserNo = json.getInt("user_no");
+            return json;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     @Override
-    public void joinRoom(String strRoomNo , String strPwd , String strNick) {
+    public JSONObject joinRoom(String strRoomNo , String strPwd , String strNick) {
         Map<String , String> mapParam = new HashMap<String , String>();
         mapParam.put("room_no" , strRoomNo );
         mapParam.put("pwd" , strPwd );
         mapParam.put("nick" , strNick);
         try {
             JSONObject json = HttpConnector.SimpleRequest("makeRoom" , mapParam);
+//            String strRst = json.getString("result");
+//            int iRoomNo = json.getInt("room_no");
+            return json;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 }

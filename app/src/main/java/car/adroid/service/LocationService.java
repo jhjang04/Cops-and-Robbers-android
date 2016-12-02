@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import car.adroid.config.AppConfig;
+import car.adroid.data.AppDBHelper;
 import car.adroid.data.AppData;
 import car.adroid.util.SimpleLogger;
 
@@ -24,7 +25,6 @@ public class LocationService extends Service {
     public Context mContext = this;
     private LocationManager mLocMan;
     private String mProvider;
-
 
     public LocationService() {
     }
@@ -45,7 +45,7 @@ public class LocationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int superRtn = super.onStartCommand(intent, flags, startId);
-        SimpleLogger.debug(mContext , "start service");
+        SimpleLogger.debug(mContext , "start Location service");
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -87,9 +87,12 @@ public class LocationService extends Service {
         public void onLocationChanged(Location location) {
             Log.d("tag","listen");
             AppData data = AppData.getInstance(mContext);
-            data.setLatitude(location.getLatitude());
-            data.setLongitude(location.getLongitude());
+//            data.setLatitude(location.getLatitude());
+//            data.setLongitude(location.getLongitude());
+            AppDBHelper dbHelper = new AppDBHelper(mContext);
+            data.updateLocalLocation(mContext , location.getLatitude() , location.getLongitude());
             SimpleLogger.debug(mContext , "lat : " + location.getLatitude() + ", lot : " + location.getLongitude() );
+
         }
 
         public void onProviderDisabled(String provider) {

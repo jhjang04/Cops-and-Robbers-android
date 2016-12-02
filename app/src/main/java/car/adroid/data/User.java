@@ -11,13 +11,60 @@ public class User {
     public static final int STATE_CATCHED= 2;
 
 
-    public int userNo;
-    public String nick;
+    private int mUserNo;
+    private String mNickName;
 
-    public int team;
-    public int state;
+    private int mTeam;
+    private int mState;
 
-    public double latitude;
-    public double longitude;
+    private double mLatitude;
+    private double mLongitude;
 
+    public int getUserNo() {
+        return mUserNo;
+    }
+
+    public void setUserNo(int mUserNo) {
+        this.mUserNo = mUserNo;
+    }
+
+    public String getNickName() {
+        return mNickName;
+    }
+
+    public void setNickName(String mNickName) {
+        this.mNickName = mNickName;
+    }
+
+    public int getTeam() {
+        return mTeam;
+    }
+
+    public void setTeam(int mTeam) {
+        this.mTeam = mTeam;
+    }
+
+    public int getState() {
+        return mState;
+    }
+
+    public void setState(int mState) {
+        this.mState = mState;
+    }
+
+    public double getLatitude() {
+        return mLatitude;
+    }
+
+    public void setLatitude(double mLatitude) {
+        this.mLatitude = mLatitude;
+    }
+
+    public double getLongitude() {
+        return mLongitude;
+    }
+
+    public void setLongitude(double mLongitude) {
+        this.mLongitude = mLongitude;
+    }
 }

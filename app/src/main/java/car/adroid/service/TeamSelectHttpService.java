@@ -8,13 +8,13 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import car.adroid.config.AppConfig;
-import car.adroid.util.SimpleLogger;
 
 public class TeamSelectHttpService extends Service {
 
     private Context mContext = this;
     private Handler mHandler = null;
-    private static Runnable mRunnable = null;
+    private Runnable mRunnable = null;
+    private Intent mBroadcast = null;
 
     @Nullable
     @Override
@@ -26,9 +26,14 @@ public class TeamSelectHttpService extends Service {
     @Override
     public void onCreate() {
         mHandler = new Handler();
+        mBroadcast = new Intent();
+        mBroadcast.setAction(AppConfig.BROADCAST_ACTION_TEAM_SELECT);
+
         mRunnable = new Runnable() {
             public void run() {
                 mHandler.postDelayed(mRunnable, AppConfig.HTTP_REQUEST_REPEAT_INTERVAL);
+
+                sendBroadcast(mBroadcast);
             }
         };
         mHandler.post(mRunnable);
@@ -44,8 +49,6 @@ public class TeamSelectHttpService extends Service {
 
     @Override
     public void onDestroy() {
-        /* IF YOU WANT THIS SERVICE KILLED WITH THE APP THEN UNCOMMENT THE FOLLOWING LINE */
-        SimpleLogger.debug(mContext, "");
         mHandler.removeCallbacks(mRunnable);
         super.onDestroy();
     }

@@ -13,10 +13,12 @@ import android.database.sqlite.SQLiteStatement;
 public class AppDBHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "car_db.db";
+    Context mContext;
 
 
     public AppDBHelper(Context context ) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        mContext = context;
     }
 
     @Override
@@ -56,39 +58,16 @@ public class AppDBHelper extends SQLiteOpenHelper {
 //        for(int i=0 ; i<TABLES.length ; i++){
 //            db.execSQL(TABLES[i].getCreateSql());
 //        }
-        String strSql;
-        strSql = "CREATE TALBE CHAT(\n" +
-                "\tIDX INTEGER\n" +
-                "\t, CAHT_FLAG INTEGER\n" +
-                "\t, USER_NO INTEGER\n" +
-                "\t, NICKNAME TEXT\n" +
-                "\t, TEAM INTEGER\n" +
-                "\t, WR_TIME TEXT\n" +
-                "\t, TEXT TEXT\n" +
-                ")";
-        db.execSQL(strSql);
 
-        strSql = "\n" +
-                "CREATE TALBE MY_INFO(\n" +
-                "\tROOM_NO INTEGER PRIMARY KEY\n" +
-                "\t, USER_NO INTEGER PRIMARY KEY\n" +
-                "\t, NICKNAME INTEGER PRIMARY KEY\n" +
-                "\t, TEAM INTEGER\n" +
-                "\t, STATE INT\n" +
-                "\t, LATITUDE REAL\n" +
-                "\t, LONGITUDE REAL\n" +
-                ")";
-
-        db.execSQL(strSql);
-
-        strSql = "CREATE TALBE USER(\n" +
-                "\t, USER_NO INTEGER PRIMARY KEY\n" +
-                "\t, NICKNAME INTEGER PRIMARY KEY\n" +
-                "\t, TEAM INTEGER\n" +
-                "\t, STATE INTEGER\n" +
-                "\t, LATITUDE REAL\n" +
-                "\t, LONGITUDE REAL\n" +
-                ")";
+        String[] strSqls = {
+                "CREATE TALBE CHAT(IDX INTEGER , CAHT_FLAG INTEGER , USER_NO INTEGER , NICKNAME TEXT , TEAM INTEGER , WR_TIME TEXT , TEXT TEXT);"
+                ,"CREATE TALBE USER(USER_NO INTEGER PRIMARY KEY , NICKNAME TEX , TEAM INTEGER , STATE INTEGER , LATITUDE REAL , LONGITUDE REAL);"
+                ,"CREATE TALBE LOCAL_INFO(ROOM_NO INTEGER , USER_NO INTEGER , NICKNAME INTEGER , TEAM INTEGER , STATE INT , LATITUDE REAL , LONGITUDE REAL);"
+                ,"INSERT INTO LOCAL_INFO(ROOM_NO) VALUES(NULL);"
+        };
+        for(int i=0 ; i<strSqls.length ; i++){
+            db.execSQL(strSqls[i]);
+        }
         db.close();
     }
 
@@ -158,4 +137,6 @@ public class AppDBHelper extends SQLiteOpenHelper {
 //            this.isKey = _isKey;
 //        }
 //    }
+
 }
+
