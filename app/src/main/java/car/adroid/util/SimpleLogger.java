@@ -27,8 +27,4 @@ public class SimpleLogger {
             Toast.makeText(context , _txt , Toast.LENGTH_SHORT).show();
         }
     }
-
-
-
-
 }

@@ -44,9 +44,8 @@ public class LocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        super.onStartCommand(intent, flags, startId);
+        int superRtn = super.onStartCommand(intent, flags, startId);
         SimpleLogger.debug(mContext , "start service");
-
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -57,11 +56,13 @@ public class LocationService extends Service {
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
 
-            return START_NOT_STICKY;
+            //return START_NOT_STICKY;
+            return superRtn;
         }
-        mLocMan.requestLocationUpdates(mProvider, AppConfig.LOCATION_RECIVE_SECONDS , AppConfig.LOCATION_RECEIVE_DISTANCE , mListener);
+        mLocMan.requestLocationUpdates(mProvider, AppConfig.LOCATION_RECIVE_MILISECONDS , AppConfig.LOCATION_RECEIVE_DISTANCE , mListener);
 
-        return START_STICKY;
+        //return START_STICKY;
+        return superRtn;
     }
 
 
@@ -85,8 +86,9 @@ public class LocationService extends Service {
     LocationListener mListener = new LocationListener() {
         public void onLocationChanged(Location location) {
             Log.d("tag","listen");
-            AppData.setLatitude(location.getLatitude());
-            AppData.setLongitude(location.getLongitude());
+            AppData data = AppData.getInstance(mContext);
+            data.setLatitude(location.getLatitude());
+            data.setLongitude(location.getLongitude());
             SimpleLogger.debug(mContext , "lat : " + location.getLatitude() + ", lot : " + location.getLongitude() );
         }
 
