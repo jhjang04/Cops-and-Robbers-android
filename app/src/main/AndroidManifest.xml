@@ -35,7 +35,9 @@
         <service
             android:name="car.adroid.service.InGameHttpService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".LoginActivity"></activity>
     </application>
 
 </manifest>

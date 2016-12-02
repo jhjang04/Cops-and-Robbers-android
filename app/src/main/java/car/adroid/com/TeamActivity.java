@@ -17,7 +17,7 @@ public class TeamActivity extends FragmentActivity {
     private ListView lvCop, lvRobber;
     ArrayList<String> listCop,listRobber;
     ArrayAdapter<String> adapterCop, adapterRobber;
-    private String userName;
+    private String userName = "test";
 
 
 
@@ -56,8 +56,8 @@ public class TeamActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team);
 
-        Intent intent = getIntent();
-        userName = intent.getExtras().getString("name");
+       // Intent intent = getIntent();
+        // userName = intent.getExtras().getString("name");
 
 
         btnToCop = (Button)findViewById(R.id.btnCop);
