@@ -5,7 +5,7 @@
  * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms. 
  */
 
-package car.adroid.com;
+package car.adroid.NMap;
 
 /**
  * Wrapper class representing POI flag types on map view.

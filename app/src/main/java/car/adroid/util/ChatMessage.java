@@ -1,4 +1,4 @@
-package car.adroid.com;
+package car.adroid.util;
 
 /**
  * Created by mbj94 on 2016-12-02.

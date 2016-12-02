@@ -35,6 +35,9 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import car.adroid.NMap.NMapPOIflagType;
+import car.adroid.NMap.NMapViewerResourceProvider;
+
 public class GameActivity extends NMapActivity implements NMapView.OnMapStateChangeListener, NMapView.OnMapViewTouchEventListener {
 
     private Button btnTeamChat, btnGlobalChat, btnUserlist;

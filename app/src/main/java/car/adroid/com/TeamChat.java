@@ -13,6 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import car.adroid.util.ChatArrayAdapter;
+import car.adroid.util.ChatMessage;
+
 public class TeamChat extends FragmentActivity {
 
     private static final String TAG = "ChatActivity";

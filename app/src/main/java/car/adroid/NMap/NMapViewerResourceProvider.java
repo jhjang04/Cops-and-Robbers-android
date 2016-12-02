@@ -5,7 +5,7 @@
  * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms. 
  */
 
-package car.adroid.com;
+package car.adroid.NMap;
 
 import android.content.Context;
 import android.graphics.Bitmap;

@@ -1,4 +1,4 @@
-package car.adroid.com;
+package car.adroid.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import car.adroid.com.R;
+import car.adroid.util.ChatMessage;
 
 /**
  * Created by mbj94 on 2016-12-02.

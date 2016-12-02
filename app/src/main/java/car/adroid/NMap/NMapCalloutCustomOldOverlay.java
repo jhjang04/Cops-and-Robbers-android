@@ -5,7 +5,7 @@
  * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms. 
  */
 
-package car.adroid.com;
+package car.adroid.NMap;
 
 import android.graphics.Canvas;
 import android.graphics.PointF;
@@ -304,7 +304,7 @@ public class NMapCalloutCustomOldOverlay extends NMapCalloutOverlay {
 			mTitleTruncated = title;
 
 			if (DEBUG) {
-				Log.i(LOG_TAG, "adjustTextBounds: mTitleTruncated=" + mTitleTruncated + ", length="
+				Log.i(LOG_TAG, "adjustTextBounds:mTitleTruncated=" + mTitleTruncated + ", length="
 					+ mTitleTruncated.length());
 			}
 		}
