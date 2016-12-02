@@ -17,7 +17,7 @@ public class AppConfig {
     public static final int LIMIT_WARNING_COUNT = 5;
     public static final float DISTANCE_CATCHED = 30;
 
-    public static final String BROADCAST_ACTION_TEAM_SELECT = "car.adroid.com.TeamSelectService.BROADCAST";
-    public static final String BROADCAST_ACTION_IN_GAME = "car.adroid.com.inGameService.BROADCAST";
+    public static final String BROADCAST_ACTION_TEAM_SELECT = "car.android.com.TeamSelectService.BROADCAST";
+    public static final String BROADCAST_ACTION_IN_GAME = "car.android.com.inGameService.BROADCAST";
 
 }
