@@ -16,7 +16,7 @@ import android.widget.ListView;
 import car.adroid.util.ChatArrayAdapter;
 import car.adroid.util.ChatMessage;
 
-public class GlobalChat extends FragmentActivity {
+public class GlobalChatActivity extends FragmentActivity {
     private ChatArrayAdapter chatArrayAdapter;
     private ListView listView;
     private EditText chatText;

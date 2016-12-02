@@ -16,7 +16,7 @@ import android.widget.ListView;
 import car.adroid.util.ChatArrayAdapter;
 import car.adroid.util.ChatMessage;
 
-public class TeamChat extends FragmentActivity {
+public class TeamChatActivity extends FragmentActivity {
 
     private static final String TAG = "ChatActivity";
 
@@ -28,16 +28,16 @@ public class TeamChat extends FragmentActivity {
     Intent intent;
     private boolean side = false;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_team_chat);
-
-
+    private void InitVariables(){
         buttonSend = (Button) findViewById(R.id.btnTeamChat);
         listView = (ListView) findViewById(R.id.lvTeamChat);
         chatText = (EditText) findViewById(R.id.tvTeamMessage);
 
+        chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.activity_chat_singlemessage);
+        listView.setAdapter(chatArrayAdapter);
+    }
+
+    private void InitSettings(){
         // hide keyboard when touching background
         listView.setOnTouchListener(new View.OnTouchListener(){
             @Override
@@ -47,6 +47,15 @@ public class TeamChat extends FragmentActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_team_chat);
+
+        InitVariables();
+        InitSettings();
 
         // hide keyboard when touching background
         findViewById(R.id.bgTeamChat).setOnTouchListener(new View.OnTouchListener(){
@@ -58,8 +67,6 @@ public class TeamChat extends FragmentActivity {
             }
         });
 
-        chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.activity_chat_singlemessage);
-        listView.setAdapter(chatArrayAdapter);
 
         chatText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {

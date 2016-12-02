@@ -39,7 +39,8 @@
             android:imeOptions="actionDone"
             android:paddingBottom="20dp"
             android:layout_toLeftOf="@+id/btnGlobalSend"
-            android:layout_toStartOf="@+id/btnGlobalSend" />
+            android:layout_toStartOf="@+id/btnGlobalSend"
+            android:textColor="@android:color/black" />
 
         <Button
             android:layout_width="wrap_content"

@@ -21,8 +21,8 @@
         </activity>
         <activity android:name=".TeamActivity" />
         <activity android:name=".GameActivity" />
-        <activity android:name=".TeamChat" />
-        <activity android:name=".GlobalChat" />
+        <activity android:name=".TeamChatActivity" />
+        <activity android:name=".GlobalChatActivity" />
 
         <service
             android:name="car.adroid.service.LocationService"

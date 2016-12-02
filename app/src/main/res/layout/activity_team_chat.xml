@@ -38,7 +38,8 @@
             android:background="@drawable/text_border"
             android:imeOptions="actionDone"
             android:paddingBottom="20dp"
-            android:layout_marginEnd="0dp" />
+            android:layout_marginEnd="0dp"
+            android:textColor="@android:color/black" />
 
         <Button
             android:layout_width="wrap_content"

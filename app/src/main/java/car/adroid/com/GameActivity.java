@@ -191,6 +191,14 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         }
     }
 
+    private void InitVariables(){
+        btnTeamChat = (Button) findViewById(R.id.btnTeamChat);
+        btnGlobalChat = (Button) findViewById(R.id.btnGlobalChat);
+        btnUserlist = (Button) findViewById(R.id.btnUserlist);
+
+        // 남은 시간 출력해주는 textView -> 추후 Service에서 시간이 줄어들도록 구현해야함
+        tvTime = (TextView) findViewById(R.id.tvTime);
+    }
 
 
     @Override
@@ -198,12 +206,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        btnTeamChat = (Button) findViewById(R.id.btnTeamChat);
-        btnGlobalChat = (Button) findViewById(R.id.btnGlobalChat);
-        btnUserlist = (Button) findViewById(R.id.btnUserlist);
-
-        // 남은 시간 출력해주는 textView -> 추후 Service에서 시간이 줄어들도록 구현해야함
-        tvTime = (TextView) findViewById(R.id.tvTime);
+        InitVariables();
 
         // 지도 출력
         MapContainer = (LinearLayout) findViewById(R.id.nmap);
@@ -211,11 +214,9 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         mMapView.setClientId(CLIENT_ID);
         mMapView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
         MapContainer.addView(mMapView);
-        //setContentView(mMapView);
         mMapView.setClickable(true);
         mMapView.setOnMapStateChangeListener(this);
         mMapView.setOnMapViewTouchEventListener(this);
-        //mMapView.setBuiltInZoomControls(true, null);
         mMapController = mMapView.getMapController();
 
         // 마커 생성
@@ -237,7 +238,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         btnTeamChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(GameActivity.this, TeamChat.class);
+                Intent intent = new Intent(GameActivity.this, TeamChatActivity.class);
                 startActivity(intent);
             }
         });
@@ -245,7 +246,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         btnGlobalChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(GameActivity.this, GlobalChat.class);
+                Intent intent = new Intent(GameActivity.this, GlobalChatActivity.class);
                 startActivity(intent);
             }
         });
@@ -259,6 +260,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
     }
 
+    /*
     public static String getReverseGeoCodingInfo(double longitude, double latitude) {
         StringBuffer sb = new StringBuffer();
         String longi = String.valueOf(longitude);
@@ -331,5 +333,5 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
             return address;
         }
     }
-
+*/
 }

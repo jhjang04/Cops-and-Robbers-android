@@ -20,7 +20,7 @@ public class LoginActivity extends FragmentActivity {
     private EditText txtRoomNumber,txtName, txtPwd;
     private RadioButton rdCreate, rdJoin;
 
-    private User user;
+    //private User user;
     private String userName;
     private String roomNum;
     private String roomPwd;
@@ -52,7 +52,7 @@ public class LoginActivity extends FragmentActivity {
 
     // 이미 존재하는 유저의 닉네임일 경우 false
     private Boolean IsUserNameProper(){
-        if (user.getNickName().length() == 0 ) {
+        if (userName.length() == 0 ) {
             // 아닐경우에 대한 적절한 처리
             return false;
         } else {
@@ -62,8 +62,7 @@ public class LoginActivity extends FragmentActivity {
 
     // 값을 받아온다.
     private void SetUserInfo(){
-        user.setNickName(txtName.getText().toString());
-
+        userName = txtName.getText().toString();
         roomNum = txtRoomNumber.getText().toString();
         roomPwd = txtPwd.getText().toString();
     }
@@ -104,26 +103,23 @@ public class LoginActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
-
         InitVariables();
         InitSettings();
 
-
-        // After creating a room, server will give pwd itself, so no need to enter pwd
+        // After creating a room, server will give room number itself, so no need to enter roomNum
         rdCreate.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                txtPwd.setText(null);
-                txtPwd.setKeyListener(null);
+                txtRoomNumber.setText(null);
+                txtRoomNumber.setKeyListener(null);
             }
         });
 
-        // enable pwd editText
+        // enable room num editText
         rdJoin.setOnClickListener(new RadioButton.OnClickListener(){
             @Override
             public void onClick(View view) {
-                txtPwd.setKeyListener(pwdKeyListener);
+                txtRoomNumber.setKeyListener(pwdKeyListener);
             }
         });
 
@@ -150,6 +146,7 @@ public class LoginActivity extends FragmentActivity {
                 }
                 */
                 Intent intent = new Intent(LoginActivity.this, TeamActivity.class);
+                intent.putExtra("name",userName);
                 startActivity(intent);
             }
         });

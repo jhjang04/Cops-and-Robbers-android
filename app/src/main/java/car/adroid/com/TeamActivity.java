@@ -21,7 +21,6 @@ public class TeamActivity extends FragmentActivity {
 
 
 
-
     private void InitList(){
         listCop.add(userName);
         adapterCop.notifyDataSetChanged();
@@ -49,17 +48,7 @@ public class TeamActivity extends FragmentActivity {
         adapterRobber.notifyDataSetChanged();
     }
 
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_team);
-
-       // Intent intent = getIntent();
-        // userName = intent.getExtras().getString("name");
-
-
+    private void InitVariables(){
         btnToCop = (Button)findViewById(R.id.btnCop);
         btnToRobber = (Button)findViewById(R.id.btnRobber);
         btnStart = (Button)findViewById(R.id.btnStart);
@@ -72,7 +61,19 @@ public class TeamActivity extends FragmentActivity {
         adapterRobber = new ArrayAdapter<String>(this, R.layout.listview_text_layout,listRobber);
         lvCop.setAdapter(adapterCop);
         lvRobber.setAdapter(adapterRobber);
+    }
 
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_team);
+
+        Intent intent = getIntent();
+        userName = intent.getExtras().getString("name");
+
+        InitVariables();
         InitList();
 
         btnToCop.setOnClickListener(new View.OnClickListener(){
@@ -100,11 +101,7 @@ public class TeamActivity extends FragmentActivity {
                 startActivity(intent);
             }
         });
-    }
 
-    @Override
-    public void onBackPressed() {
-        Toast.makeText(this, "Back button pressed.", Toast.LENGTH_SHORT).show();
-        super.onBackPressed();
+       // finish();
     }
 }
