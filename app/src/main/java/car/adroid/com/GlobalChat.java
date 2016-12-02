@@ -70,6 +70,7 @@ public class GlobalChat extends FragmentActivity {
                 sendChatMessage();
             }
         });
+        //
 
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         listView.setAdapter(chatArrayAdapter);
