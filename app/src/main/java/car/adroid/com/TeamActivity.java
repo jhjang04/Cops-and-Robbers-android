@@ -23,9 +23,13 @@ public class TeamActivity extends FragmentActivity {
 
     private void InitList(){
         listCop.add(userName);
-        adapterCop.notifyDataSetChanged();
-
         listRobber.add("testItem2");
+        NotifyChange();
+
+    }
+
+    private void NotifyChange(){
+        adapterCop.notifyDataSetChanged();
         adapterRobber.notifyDataSetChanged();
     }
 
@@ -44,8 +48,7 @@ public class TeamActivity extends FragmentActivity {
         srcList.remove(idx);
         dstList.add(userName);
 
-        adapterCop.notifyDataSetChanged();
-        adapterRobber.notifyDataSetChanged();
+        NotifyChange();
     }
 
     private void InitVariables(){
@@ -59,6 +62,10 @@ public class TeamActivity extends FragmentActivity {
         listRobber = new ArrayList<String>();
         adapterCop = new ArrayAdapter<String>(this, R.layout.listview_text_layout, listCop);
         adapterRobber = new ArrayAdapter<String>(this, R.layout.listview_text_layout,listRobber);
+
+    }
+
+    private void InitSettings(){
         lvCop.setAdapter(adapterCop);
         lvRobber.setAdapter(adapterRobber);
     }
@@ -74,6 +81,7 @@ public class TeamActivity extends FragmentActivity {
         userName = intent.getExtras().getString("name");
 
         InitVariables();
+        InitSettings();
         InitList();
 
         btnToCop.setOnClickListener(new View.OnClickListener(){
@@ -99,9 +107,8 @@ public class TeamActivity extends FragmentActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(TeamActivity.this, GameActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
-
-       // finish();
     }
 }

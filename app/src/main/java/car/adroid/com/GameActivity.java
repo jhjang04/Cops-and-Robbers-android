@@ -67,7 +67,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
 
     @Override
-    public void onMapInitHandler(NMapView mapView, NMapError errorInfo) {
+        public void onMapInitHandler(NMapView mapView, NMapError errorInfo) {
         if (errorInfo == null) {
             mMapController.setMapCenter(new NGeoPoint(126.978371, 37.566691), 11);
         } else {
