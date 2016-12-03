@@ -5,12 +5,27 @@ package car.adroid.util;
  */
 
 public class ChatMessage {
-    public boolean left;
-    public String message;
+    private boolean left;
+    private String message;
+    private String sender;
 
-    public ChatMessage(boolean left, String message) {
+    public String getSender() {
+        return sender;
+    }
+
+    public boolean IsLeft() {
+        return left;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+
+    public ChatMessage(boolean left, String message,String sender) {
         super();
         this.left = left;
         this.message = message;
+        this.sender = sender;
     }
 }

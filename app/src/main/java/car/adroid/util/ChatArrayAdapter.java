@@ -23,12 +23,13 @@ import car.adroid.util.ChatMessage;
 
 public class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
 
-    private TextView chatText;
+    private TextView senderText, chatText;
     private List<ChatMessage> chatMessageList = new ArrayList<ChatMessage>();
     private LinearLayout singleMessageContainer;
 
     @Override
     public void add(ChatMessage object) {
+
         chatMessageList.add(object);
         super.add(object);
     }
@@ -53,10 +54,13 @@ public class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
         }
         singleMessageContainer = (LinearLayout) row.findViewById(R.id.singleMessageContainer);
         ChatMessage chatMessageObj = getItem(position);
+        senderText = (TextView)row.findViewById(R.id.tvSender);
         chatText = (TextView) row.findViewById(R.id.singleMessage);
-        chatText.setText(chatMessageObj.message);
-        chatText.setBackgroundResource(chatMessageObj.left ? R.drawable.bubble_b : R.drawable.bubble_a);
-        singleMessageContainer.setGravity(chatMessageObj.left ? Gravity.LEFT : Gravity.RIGHT);
+
+        senderText.setText(chatMessageObj.getSender());
+        chatText.setText(chatMessageObj.getMessage());
+        chatText.setBackgroundResource(chatMessageObj.IsLeft() ? R.drawable.bubble_b : R.drawable.bubble_a);
+        singleMessageContainer.setGravity(chatMessageObj.IsLeft() ? Gravity.LEFT : Gravity.RIGHT);
         return row;
     }
 

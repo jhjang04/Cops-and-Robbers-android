@@ -102,7 +102,7 @@ public class GlobalChatActivity extends FragmentActivity {
     private boolean sendChatMessage(){
         if(!IsEmptyText())
         {
-            chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString()));
+            chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString(),"testSender"));
             chatText.setText("");
             side = !side;
             return true;

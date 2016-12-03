@@ -21,6 +21,8 @@ public class TeamChatActivity extends FragmentActivity {
     private static final String TAG = "ChatActivity";
 
     private ChatArrayAdapter chatArrayAdapter;
+
+
     private ListView listView;
     private EditText chatText;
     private Button buttonSend;
@@ -33,8 +35,7 @@ public class TeamChatActivity extends FragmentActivity {
         listView = (ListView) findViewById(R.id.lvTeamChat);
         chatText = (EditText) findViewById(R.id.tvTeamMessage);
 
-        chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.activity_chat_singlemessage);
-        listView.setAdapter(chatArrayAdapter);
+
     }
 
     private void InitSettings(){
@@ -47,15 +48,6 @@ public class TeamChatActivity extends FragmentActivity {
                 return false;
             }
         });
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_team_chat);
-
-        InitVariables();
-        InitSettings();
 
         // hide keyboard when touching background
         findViewById(R.id.bgTeamChat).setOnTouchListener(new View.OnTouchListener(){
@@ -67,6 +59,18 @@ public class TeamChatActivity extends FragmentActivity {
             }
         });
 
+        listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.activity_chat_singlemessage);
+        listView.setAdapter(chatArrayAdapter);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_team_chat);
+
+        InitVariables();
+        InitSettings();
 
         chatText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -83,8 +87,6 @@ public class TeamChatActivity extends FragmentActivity {
             }
         });
 
-        listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        listView.setAdapter(chatArrayAdapter);
 
         //to scroll the list view to bottom on data change
         chatArrayAdapter.registerDataSetObserver(new DataSetObserver() {
@@ -108,9 +110,10 @@ public class TeamChatActivity extends FragmentActivity {
     }
 
     private boolean sendChatMessage(){
+
         if(!IsEmptyText())
         {
-            chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString()));
+            chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString(),"testSender"));
             chatText.setText("");
             side = !side;
             return true;
