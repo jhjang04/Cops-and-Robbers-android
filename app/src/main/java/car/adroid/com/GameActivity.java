@@ -315,7 +315,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
                 */
     }
-
+//
     @Override
     public void onBackPressed() {
         super.onBackPressed();
