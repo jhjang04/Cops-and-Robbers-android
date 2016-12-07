@@ -21,6 +21,8 @@ import car.adroid.conn.HttpConnector;
 import car.adroid.data.AppData;
 import car.adroid.util.SimpleLogger;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+
 public class LoginActivity extends FragmentActivity {
 
     private Context mContext = this;
@@ -107,7 +109,7 @@ public class LoginActivity extends FragmentActivity {
         rdCreate.setChecked(true);
         txtRoomNumber.setVisibility(View.GONE);
         tvRoomNumber.setVisibility(View.GONE);
-        pwdKeyListener = txtPwd.getKeyListener();
+        //pwdKeyListener = txtPwd.getKeyListener();
 
         //txtPwd.setKeyListener(null);
     }
