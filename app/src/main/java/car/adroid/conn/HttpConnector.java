@@ -17,7 +17,7 @@ import car.adroid.config.AppConfig;
  * Created by jjh on 2016-11-29.
  */
 
-public class HttpConnector extends abstractConnector{
+public class HttpConnector implements ConnectorInterface{
 
     public static JSONObject SimpleRequest(String src , Map params) throws Exception {
         URL Url = null;
@@ -65,7 +65,7 @@ public class HttpConnector extends abstractConnector{
 
             return json;
         }
-        catch(Exception e){
+        catch(Exception e) {
             throw e;
         }
         finally {
@@ -77,7 +77,7 @@ public class HttpConnector extends abstractConnector{
     public JSONObject makeRoom(String strPwd , String strNick) {
         Map<String , String> mapParam = new HashMap<String , String>();
         mapParam.put("pwd" , strPwd);
-        mapParam.put("nick" , strNick);
+        mapParam.put("nickname" , strNick);
 
         try {
             JSONObject json = HttpConnector.SimpleRequest("makeRoom" , mapParam);
@@ -92,11 +92,11 @@ public class HttpConnector extends abstractConnector{
     }
 
     @Override
-    public JSONObject joinRoom(String strRoomNo , String strPwd , String strNick) {
-        Map<String , String> mapParam = new HashMap<String , String>();
-        mapParam.put("room_no" , strRoomNo );
-        mapParam.put("pwd" , strPwd );
-        mapParam.put("nick" , strNick);
+    public JSONObject joinRoom(int  roomId , String pwd , String nickname) {
+        Map<String , Object > mapParam = new HashMap<String , Object>();
+        mapParam.put("room_id" , roomId );
+        mapParam.put("pwd" , pwd );
+        mapParam.put("nickname" , nickname);
         try {
             JSONObject json = HttpConnector.SimpleRequest("makeRoom" , mapParam);
 //            String strRst = json.getString("result");
@@ -107,4 +107,49 @@ public class HttpConnector extends abstractConnector{
         }
         return null;
     }
+
+
+    @Override
+    public JSONObject selectTeam(int roomId , int userNo, int team , int readyStatus) {
+        Map<String , Object> mapParam = new HashMap<String , Object>();
+        mapParam.put("room_id" , roomId );
+        mapParam.put("user_no" , userNo );
+        mapParam.put("team" , team);
+        mapParam.put("ready_status" , readyStatus);
+
+        try {
+            JSONObject json = HttpConnector.SimpleRequest("makeRoom" , mapParam);
+//            String strRst = json.getString("result");
+//            int iRoomNo = json.getInt("room_no");
+            return json;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public JSONObject inGame(int roomNo, int userNo, int team,  double latitude, double longitude, int state, int lastChatIdx, int lastTeamChatIdx) {
+        Map<String , Object> mapParam = new HashMap<String , Object>();
+        mapParam.put("room_id" , roomNo );
+        mapParam.put("user_no" , userNo );
+        mapParam.put("team" , team );
+        mapParam.put("latitude" , latitude );
+        mapParam.put("longitude" , longitude );
+        mapParam.put("state" , state );
+        mapParam.put("lastChatIdx" , lastChatIdx );
+        mapParam.put("lastTeamChatIdx" , lastTeamChatIdx);
+
+        try {
+            JSONObject json = HttpConnector.SimpleRequest("playing" , mapParam);
+//            String strRst = json.getString("result");
+//            int iRoomNo = json.getInt("room_no");
+            return json;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 }
