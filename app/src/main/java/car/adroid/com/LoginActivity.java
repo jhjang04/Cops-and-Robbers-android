@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.text.method.KeyListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -33,39 +32,6 @@ public class LoginActivity extends FragmentActivity {
     private String userName;
     private String roomNum;
     private String roomPwd;
-    private KeyListener pwdKeyListener;
-
-    // 방 번호는 1~10000 사이의 숫자
-    // 캐릭터가 섞여있으면 false
-    // 10000이 넘는 숫자일 경우 false
-    private Boolean IsRoomNumProper(){
-        if ( roomNum.length() == 0 ) {
-            // 아닐경우에 대한 적절한 처리
-            return false;
-        } else {
-            return true;
-        }
-    }
-    // 공백일 경우 false
-    // 방 비밀번호와 일치하지 않을경우 false
-    private Boolean IsPwdProper(){
-        if ( roomPwd.length() == 0 ) {
-            // 아닐경우에 대한 적절한 처리
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    // 이미 존재하는 유저의 닉네임일 경우 false
-    private Boolean IsUserNameProper(){
-        if (userName.length() == 0 ) {
-            // 아닐경우에 대한 적절한 처리
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     // 값을 받아온다.
     private void SetUserInfo(){
@@ -107,7 +73,6 @@ public class LoginActivity extends FragmentActivity {
         rdCreate.setChecked(true);
         txtRoomNumber.setVisibility(View.GONE);
         tvRoomNumber.setVisibility(View.GONE);
-        pwdKeyListener = txtPwd.getKeyListener();
 
         //txtPwd.setKeyListener(null);
     }
@@ -130,8 +95,6 @@ public class LoginActivity extends FragmentActivity {
                     txtRoomNumber.setVisibility(View.GONE);
                     tvRoomNumber.setVisibility(View.GONE);
                 }
-//                txtRoomNumber.setText(null);
-                //txtRoomNumber.setKeyListener(null);
             }
         });
 
@@ -145,8 +108,6 @@ public class LoginActivity extends FragmentActivity {
                     txtRoomNumber.setVisibility(View.VISIBLE);
                     tvRoomNumber.setVisibility(View.VISIBLE);
                 }
-//                txtRoomNumber.setKeyListener(pwdKeyListener);
-                //txtRoomNumber.setKeyListener(null);
             }
         });
 
@@ -155,19 +116,16 @@ public class LoginActivity extends FragmentActivity {
             public void onClick(View view) {
                 SetUserInfo();
                 if(userName== null ||userName.equals("")){
-                            tvMessage.setText("input user name");
-//                            Toast.makeText(mContext , "input user name", Toast.LENGTH_LONG).show();
+                    tvMessage.setText("input user name");
                     return;
                 }
                 if(roomPwd == null || roomPwd.equals("")){
-                            tvMessage.setText("input password");
-//                            Toast.makeText(mContext , "input password", Toast.LENGTH_LONG).show();
+                    tvMessage.setText("input password");
                     return;
                 }
 
                 if(rdJoin.isChecked() && (roomNum == null || roomNum.equals("")) ){
-                            tvMessage.setText("input room number");
-//                            Toast.makeText(mContext , "input room number", Toast.LENGTH_LONG).show();
+                    tvMessage.setText("input room number");
                     return;
                 }
 
