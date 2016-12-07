@@ -80,7 +80,7 @@ public class SimpleLogger extends Service {
                 mHandler.postDelayed(mRunnable, AppConfig.LOGGER_SHOW_DELAY);
 //                if((curDate.getTime() -  mLastShow.getTime()) > AppConfig.LOGGER_SHOW_DELAY) {
                 if(mBuffer == null || mBuffer.length() == 0){
-//                    return;
+                    return;
                 }
                 Toast.makeText(mContext , mBuffer.toString() , Toast.LENGTH_LONG).show();
 //                mLastShow = curDate;
