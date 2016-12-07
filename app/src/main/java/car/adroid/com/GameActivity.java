@@ -1,13 +1,24 @@
 package car.adroid.com;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.provider.Settings;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +61,17 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
     private NMapController mMapController = null;
     private LinearLayout MapContainer;
 
+
+    private String[] navItems = {"Brown", "Cadet Blue", "Dark Olive Green",
+            "Dark Orange", "Golden Rod"};
+    private ListView lvUsrList;
+    private FrameLayout usrContainer;
+
+
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
     //private NMapOverlayItem a;
 
 
@@ -63,6 +85,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
     private NMapMyLocationOverlay mMyLocationOverlay; //지도 위에 현재 위치를 표시하는 오버레이 클래스
     private NMapLocationManager mMapLocationManager; //단말기의 현재 위치 탐색 기능 사용 클래스
     private NMapCompassManager mMapCompassManager; //단말기의 나침반 기능 사용 클래스
+
 
 
 
@@ -200,6 +223,14 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         tvTime = (TextView) findViewById(R.id.tvTime);
     }
 
+    private void InitSettings(){
+        lvUsrList = (ListView)findViewById(R.id.game_activity_userlist);
+        usrContainer = (FrameLayout)findViewById(R.id.container_activity_game);
+
+        lvUsrList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, navItems));
+        //lvNavList.setOnItemClickListener(new DrawerItemClickListener());
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +238,8 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         setContentView(R.layout.activity_game);
 
         InitVariables();
+        InitSettings();
+
 
         // 지도 출력
         MapContainer = (LinearLayout) findViewById(R.id.nmap);
@@ -234,7 +267,6 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
                 mMapCompassManager);
         startMyLocation(); //내 위치 찾기 함수 호출
 
-
         btnTeamChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -258,80 +290,109 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
             }
         });
 
+/*
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        mTitle = mDrawerTitle = getTitle();
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.game_activity_drawer);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                toolbar, R.string.open_drawer, R.string.close_drawer) {
+
+            /** Called when a drawer has settled in a completely closed state. *
+            public void onDrawerClosed(View view) {
+                getActionBar().setTitle(mTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely open state. *
+            public void onDrawerOpened(View drawerView) {
+                getActionBar().setTitle(mDrawerTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+
+        // Set the drawer toggle as the DrawerListener
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+
+                */
+    }
+//
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     /*
-    public static String getReverseGeoCodingInfo(double longitude, double latitude) {
-        StringBuffer sb = new StringBuffer();
-        String longi = String.valueOf(longitude);
-        String lati = String.valueOf(latitude);
-        BufferedReader br = null;
-        InputStreamReader in = null;
-        HttpsURLConnection httpConn = null;
-        String address = null;
+        public static String getReverseGeoCodingInfo(double longitude, double latitude) {
+            StringBuffer sb = new StringBuffer();
+            String longi = String.valueOf(longitude);
+            String lati = String.valueOf(latitude);
+            BufferedReader br = null;
+            InputStreamReader in = null;
+            HttpsURLConnection httpConn = null;
+            String address = null;
 
 
-        // TODO Auto-generated method stub
-        //"https://openapi.naver.com/v1/map/reversegeocode?query=127.1141382,37.3599968"
-        try {
-            URL url = new URL("https://openapi.naver.com/v1/map/reversegeocode?query=" + longi + "," + lati);
-            httpConn = (HttpsURLConnection) url.openConnection();
-            httpConn.setRequestProperty("X-Naver-Client-Id", "bDBAfTyCHhTCnzNjWBXi");
-            httpConn.setRequestProperty("X-Naver-Client-Secret", "KxH3N2Bicc");
-            httpConn.setRequestMethod("GET");
-            httpConn.connect();
+            // TODO Auto-generated method stub
+            //"https://openapi.naver.com/v1/map/reversegeocode?query=127.1141382,37.3599968"
+            try {
+                URL url = new URL("https://openapi.naver.com/v1/map/reversegeocode?query=" + longi + "," + lati);
+                httpConn = (HttpsURLConnection) url.openConnection();
+                httpConn.setRequestProperty("X-Naver-Client-Id", "bDBAfTyCHhTCnzNjWBXi");
+                httpConn.setRequestProperty("X-Naver-Client-Secret", "KxH3N2Bicc");
+                httpConn.setRequestMethod("GET");
+                httpConn.connect();
 
-            //int len = conn.getContentLength();
-            in = new InputStreamReader(httpConn.getInputStream());
-            br = new BufferedReader(in);
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-            //return sb.toString();
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        JSONObject jsonObject;
-        JSONObject jsonObject2;
-        JSONObject jsonObject3;
-        JSONArray jsonArray;
-
-
-        try {
-            jsonObject = new JSONObject(sb.toString());
-            jsonObject = (JSONObject) jsonObject.get("result");
-            jsonArray = (JSONArray) jsonObject.get("items");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                jsonObject2 = (JSONObject) jsonArray.get(i);
-                if (null != jsonObject2.get("address")) {
-                    address = (String) jsonObject2.get("address").toString();
-                    Log.v("qioip", address);
-
+                //int len = conn.getContentLength();
+                in = new InputStreamReader(httpConn.getInputStream());
+                br = new BufferedReader(in);
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line).append("\n");
                 }
+                //return sb.toString();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            br.close();
-            in.close();
-            httpConn.disconnect();
+
+            JSONObject jsonObject;
+            JSONObject jsonObject2;
+            JSONObject jsonObject3;
+            JSONArray jsonArray;
 
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                jsonObject = new JSONObject(sb.toString());
+                jsonObject = (JSONObject) jsonObject.get("result");
+                jsonArray = (JSONArray) jsonObject.get("items");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    jsonObject2 = (JSONObject) jsonArray.get(i);
+                    if (null != jsonObject2.get("address")) {
+                        address = (String) jsonObject2.get("address").toString();
+                        Log.v("qioip", address);
+
+                    }
+                }
+
+                br.close();
+                in.close();
+                httpConn.disconnect();
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (address == null || address.isEmpty()) {
+                return "위치 파악 중";
+            } else {
+                return address;
+            }
         }
-
-        if (address == null || address.isEmpty()) {
-            return "위치 파악 중";
-        } else {
-            return address;
-        }
-    }
 */
 }
