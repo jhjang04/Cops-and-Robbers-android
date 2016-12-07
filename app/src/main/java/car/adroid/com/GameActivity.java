@@ -30,6 +30,7 @@ import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapLocationManager;
 import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.maplib.NGeoPoint;
+import com.nhn.android.maps.nmapdata.n;
 import com.nhn.android.maps.nmapmodel.NMapError;
 import com.nhn.android.maps.overlay.NMapPOIdata;
 import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
@@ -65,7 +66,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
 
     private UserListAdapter userListAdapter ;
-    private TestUser[] users = new TestUser[]{new TestUser(1,1), new TestUser(2,1), new TestUser(2,2)};
+    private TestUser[] users = new TestUser[]{new TestUser(1,1,"cop"), new TestUser(2,1,"robber"), new TestUser(2,2,"dead")};
     private ListView lvUsrList;
 
 
@@ -326,6 +327,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
         public int team;
         public int state;
+        public String nickname;
 
         public int getTeam() {
             return team;
@@ -334,10 +336,12 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         public int getState(){
             return state;
         }
+        public String getNickName(){return nickname;}
 
-        TestUser(int team, int state){
+        TestUser(int team, int state, String nickname){
             this.team = team;
             this.state = state;
+            this.nickname = nickname;
         }
     };
 }

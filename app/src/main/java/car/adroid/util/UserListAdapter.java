@@ -42,8 +42,7 @@ public class UserListAdapter extends ArrayAdapter<GameActivity.TestUser> {
         }
         GameActivity.TestUser user = getItem(position);
         tvUser = (TextView)row.findViewById(R.id.tvUserState);
-        tvUser.setText("test");
-        //tvUser.setText(user.getNickName());
+        tvUser.setText(user.getNickName());
 
         if(user.getTeam() == 1)
             tvUser.setTextColor(Color.BLUE);
