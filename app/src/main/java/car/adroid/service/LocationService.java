@@ -13,10 +13,8 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 
 import car.adroid.config.AppConfig;
-import car.adroid.data.AppDBHelper;
 import car.adroid.data.AppData;
 import car.adroid.util.SimpleLogger;
 
@@ -85,14 +83,12 @@ public class LocationService extends Service {
 
     LocationListener mListener = new LocationListener() {
         public void onLocationChanged(Location location) {
-            Log.d("tag","listen");
+
             AppData data = AppData.getInstance(mContext);
 //            data.setLatitude(location.getLatitude());
 //            data.setLongitude(location.getLongitude());
-            AppDBHelper dbHelper = new AppDBHelper(mContext);
             data.updateLocalLocation(mContext , location.getLatitude() , location.getLongitude());
-            SimpleLogger.debug(mContext , "lat : " + location.getLatitude() + ", lot : " + location.getLongitude() );
-
+            SimpleLogger.debug(mContext , "lat : " + location.getLatitude() + ", lot : " + location.getLongitude() + "speed : " + location.getSpeed());
         }
 
         public void onProviderDisabled(String provider) {

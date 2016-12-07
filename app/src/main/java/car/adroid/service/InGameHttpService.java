@@ -43,7 +43,7 @@ public class InGameHttpService extends Service {
                 AppData data = AppData.getInstance(mContext);
 
                 Map params = new HashMap<>();
-                params.put("room_id",data.getRoomNo());
+                params.put("room_id",data.getRoomId());
                 params.put("user_no",data.getUserNo());
                 params.put("latitude",data.getLatitude());
                 params.put("longitude",data.getLongitude());
