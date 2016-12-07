@@ -12,7 +12,7 @@
     tools:context="car.adroid.com.LoginActivity">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tvRoomNumber"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_alignParentLeft="true"
@@ -28,7 +28,7 @@
         android:layout_height="30dp"
         android:layout_alignLeft="@+id/txtName"
         android:layout_alignStart="@+id/txtName"
-        android:layout_alignTop="@+id/textView2"
+        android:layout_alignTop="@+id/tvRoomNumber"
         android:background="@drawable/text_border"
         android:ems="10"
         android:hint="Enter room number"
@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/textView2"
+        android:layout_below="@+id/tvRoomNumber"
         android:layout_marginLeft="18dp"
         android:layout_marginStart="18dp"
         android:layout_marginTop="24dp"
@@ -150,4 +150,16 @@
             android:layout_height="30dp"
             android:layout_marginLeft="50dp" />
     </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnNext"
+        android:id="@+id/tvMessage"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textAlignment="center" />
+
 </RelativeLayout>

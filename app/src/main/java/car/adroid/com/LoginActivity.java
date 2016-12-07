@@ -1,9 +1,9 @@
 package car.adroid.com;
 
+import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.method.KeyListener;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,13 +11,22 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import car.adroid.data.User;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import car.adroid.conn.HttpConnector;
+import car.adroid.data.AppData;
+import car.adroid.util.SimpleLogger;
 
 public class LoginActivity extends FragmentActivity {
 
+    private Context mContext = this;
     private Button btnNext;
     private EditText txtRoomNumber,txtName, txtPwd;
+    private TextView tvRoomNumber , tvMessage;
     private RadioButton rdCreate, rdJoin;
 
     //private User user;
@@ -25,8 +34,6 @@ public class LoginActivity extends FragmentActivity {
     private String roomNum;
     private String roomPwd;
     private KeyListener pwdKeyListener;
-
-
 
     // 방 번호는 1~10000 사이의 숫자
     // 캐릭터가 섞여있으면 false
@@ -80,6 +87,10 @@ public class LoginActivity extends FragmentActivity {
         // Radio Button for 2 mode (create room / join room)
         rdCreate = (RadioButton)findViewById(R.id.rdCreate);
         rdJoin = (RadioButton)findViewById(R.id.rdJoin);
+
+        //textview
+        tvRoomNumber = (TextView) findViewById(R.id.tvRoomNumber);
+        tvMessage = (TextView) findViewById(R.id.tvMessage);
     }
 
     private void InitSettings(){
@@ -94,8 +105,11 @@ public class LoginActivity extends FragmentActivity {
         });
 
         rdCreate.setChecked(true);
+        txtRoomNumber.setVisibility(View.GONE);
+        tvRoomNumber.setVisibility(View.GONE);
         pwdKeyListener = txtPwd.getKeyListener();
-        txtPwd.setKeyListener(null);
+
+        //txtPwd.setKeyListener(null);
     }
 
     @Override
@@ -110,8 +124,14 @@ public class LoginActivity extends FragmentActivity {
         rdCreate.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                txtRoomNumber.setText(null);
-                txtRoomNumber.setKeyListener(null);
+                if(rdCreate.isChecked()){
+                    txtRoomNumber.setText(null);
+                    txtPwd.setText(null);
+                    txtRoomNumber.setVisibility(View.GONE);
+                    tvRoomNumber.setVisibility(View.GONE);
+                }
+//                txtRoomNumber.setText(null);
+                //txtRoomNumber.setKeyListener(null);
             }
         });
 
@@ -119,7 +139,14 @@ public class LoginActivity extends FragmentActivity {
         rdJoin.setOnClickListener(new RadioButton.OnClickListener(){
             @Override
             public void onClick(View view) {
-                txtRoomNumber.setKeyListener(pwdKeyListener);
+                if(rdJoin.isChecked()){
+                    txtRoomNumber.setText(null);
+                    txtPwd.setText(null);
+                    txtRoomNumber.setVisibility(View.VISIBLE);
+                    tvRoomNumber.setVisibility(View.VISIBLE);
+                }
+//                txtRoomNumber.setKeyListener(pwdKeyListener);
+                //txtRoomNumber.setKeyListener(null);
             }
         });
 
@@ -127,27 +154,61 @@ public class LoginActivity extends FragmentActivity {
             @Override
             public void onClick(View view) {
                 SetUserInfo();
-
-                /*
-                // 예외 상황에 맞게 toast
-                // 방 안에 이미 존재하는 닉네임인지
-                if(!IsUserNameProper()){
-
+                if(userName== null ||userName.equals("")){
+                            tvMessage.setText("input user name");
+//                            Toast.makeText(mContext , "input user name", Toast.LENGTH_LONG).show();
+                    return;
                 }
-                // 존재하는 방 번호를 입력했는지
-                else if(!IsRoomNumProper()){
-
+                if(roomPwd == null || roomPwd.equals("")){
+                            tvMessage.setText("input password");
+//                            Toast.makeText(mContext , "input password", Toast.LENGTH_LONG).show();
+                    return;
                 }
-                else if( !IsPwdProper() & rdJoin.isChecked()){
 
+                if(rdJoin.isChecked() && (roomNum == null || roomNum.equals("")) ){
+                            tvMessage.setText("input room number");
+//                            Toast.makeText(mContext , "input room number", Toast.LENGTH_LONG).show();
+                    return;
                 }
-                else{
 
-                }
-                */
-                Intent intent = new Intent(LoginActivity.this, TeamActivity.class);
-                intent.putExtra("name",userName);
-                startActivity(intent);
+                new Thread() {
+                    public void run() {
+                        Intent intent = new Intent(LoginActivity.this, TeamActivity.class);
+                        intent.putExtra("name", userName);
+                        AppData appData = AppData.getInstance(mContext);
+
+                        JSONObject response = null;
+                        String result;
+                        int room_id = 0;
+                        int user_no = 0;
+                        int team = 0;
+                        try {
+                            if (rdCreate.isChecked()) {   //if make Room
+                                response = new HttpConnector().makeRoom(roomPwd, userName);
+                                result = response.getString("result");
+                                room_id = response.getInt("room_id");
+                                user_no = response.getInt("user_no");
+                                team = response.getInt("team");
+                            } else {    //if join Room
+                                room_id = Integer.parseInt(roomNum);
+                                response = new HttpConnector().joinRoom(room_id, roomPwd, userName);
+                                result = response.getString("result");
+                                if(result.equals("PASS")){
+                                    user_no = response.getInt("user_no");
+                                    team = response.getInt("team");
+                                }
+                                else{
+                                    Toast.makeText(mContext,"방 정보가 없습니다.",Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            appData.updateGameBaseInfo(mContext, room_id, user_no, userName , team);
+                            startActivity(intent);
+                        } catch (JSONException e) {
+                            SimpleLogger.info(LoginActivity.this, e.toString());
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
             }
         });
     }
