@@ -21,8 +21,8 @@
         <activity android:name=".LoginActivity"></activity>
         <activity android:name=".TeamActivity" />
         <activity android:name=".GameActivity" />
-        <activity android:name=".TeamChatActivity" />
-        <activity android:name=".GlobalChatActivity" />
+        <activity android:name=".TeamChatActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".GlobalChatActivity" android:theme="@style/Theme.Transparent" />
 
 
         <service
