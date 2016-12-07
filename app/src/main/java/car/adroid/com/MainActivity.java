@@ -1,40 +1,83 @@
 package car.adroid.com;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.text.method.KeyListener;
-import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.TextView;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
+
+import car.adroid.service.LocationService;
+import car.adroid.util.SimpleLogger;
 
 public class MainActivity extends FragmentActivity {
 
+    public static final int PERMISSION_REQ_CODE = 0;
+    private boolean mStarted = false;
+    private Context mContext = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET};
+        ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQ_CODE);
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Do something after 100ms
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }, 1000);
+//        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0);
+//        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},1);
+//        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.INTERNET},2);
+
+
+        //startService(new Intent(MainActivity.this , LocationService.class));
+
+//        final Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                //Do something after 100ms
+//                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//                startActivity(intent);
+//                finish();
+//            }
+//        }, 1000);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode){
+            case PERMISSION_REQ_CODE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    //해당 권한이 승낙된 경우.
+                    mStarted = true;
+                    startService(new Intent( mContext , SimpleLogger.class));
+                    startService(new Intent( mContext , LocationService.class));
+                    SimpleLogger.debug(mContext , "start service..");
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                } else {
+                    //해당 권한이 거절된 경우.
+                    Toast.makeText(this,"permission denied.." , Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                break;
+        }
+    }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if(mStarted) {
+            SimpleLogger.debug(mContext , "stop service..");
+            stopService(new Intent(mContext, SimpleLogger.class));
+            stopService(new Intent(mContext, LocationService.class));
+            finish();
+        }
     }
 }
