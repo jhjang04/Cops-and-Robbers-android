@@ -5,10 +5,12 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.provider.Settings;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -239,6 +241,8 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
         InitVariables();
         InitSettings();
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.game_activity_drawer);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
 
         // 지도 출력
@@ -287,38 +291,19 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
             @Override
             public void onClick(View view) {
                 // show all players on the map
+                mDrawerLayout.openDrawer(Gravity.LEFT);
             }
         });
 
-/*
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        mTitle = mDrawerTitle = getTitle();
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.game_activity_drawer);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                toolbar, R.string.open_drawer, R.string.close_drawer) {
-
-            /** Called when a drawer has settled in a completely closed state. *
-            public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely open state. *
-            public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-
-        // Set the drawer toggle as the DrawerListener
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-
-                */
     }
-//
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.game_activity_drawer);
+        if (drawer.isDrawerOpen(Gravity.LEFT)) {
+            drawer.closeDrawer(Gravity.LEFT);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     /*
