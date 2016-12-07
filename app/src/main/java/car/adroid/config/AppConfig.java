@@ -5,6 +5,8 @@ package car.adroid.config;
  */
 
 public class AppConfig {
+    public static final String CLIENT_ID = "1Ure4ugOivjE9hHXmHld";//애플리케이션 클라이언트 아이디값";
+    public static final String CLIENT_SECRET = "oJoJK6OIFF";//애플리케이션 클라이언트 시크릿값";
     public static final boolean DEBUG = true;
     public static final int LOGGER_SHOW_DELAY = 5000;
 

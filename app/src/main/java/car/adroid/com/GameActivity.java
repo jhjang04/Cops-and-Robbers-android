@@ -50,31 +50,26 @@ import javax.net.ssl.HttpsURLConnection;
 
 import car.adroid.NMap.NMapPOIflagType;
 import car.adroid.NMap.NMapViewerResourceProvider;
+import car.adroid.config.AppConfig;
+import car.adroid.data.User;
+import car.adroid.util.UserListAdapter;
 
 public class GameActivity extends NMapActivity implements NMapView.OnMapStateChangeListener, NMapView.OnMapViewTouchEventListener {
 
     private Button btnTeamChat, btnGlobalChat, btnUserlist;
     private TextView tvTime;
 
-    final private String CLIENT_ID = "1Ure4ugOivjE9hHXmHld";//애플리케이션 클라이언트 아이디값";
-    final private String CLIENT_SECRET = "oJoJK6OIFF";//애플리케이션 클라이언트 시크릿값";
-
     private NMapView mMapView = null;
     private NMapController mMapController = null;
     private LinearLayout MapContainer;
 
 
-    private String[] navItems = {"Brown", "Cadet Blue", "Dark Olive Green",
-            "Dark Orange", "Golden Rod"};
+    private UserListAdapter userListAdapter ;
+    private TestUser[] users = new TestUser[]{new TestUser(1,1), new TestUser(2,1), new TestUser(2,2)};
     private ListView lvUsrList;
-    private FrameLayout usrContainer;
 
 
     private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
-    //private NMapOverlayItem a;
 
 
     //지도 위 오버레이 객체 드로잉에 필요한 리소스 데이터 제공 클래스
@@ -223,15 +218,62 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
         // 남은 시간 출력해주는 textView -> 추후 Service에서 시간이 줄어들도록 구현해야함
         tvTime = (TextView) findViewById(R.id.tvTime);
+
+        // 유저리스트 사이드바
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.game_activity_drawer);
     }
 
     private void InitSettings(){
         lvUsrList = (ListView)findViewById(R.id.game_activity_userlist);
-        usrContainer = (FrameLayout)findViewById(R.id.container_activity_game);
 
-        lvUsrList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, navItems));
+        //lvUsrList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, navItems));
         //lvNavList.setOnItemClickListener(new DrawerItemClickListener());
+        userListAdapter = new UserListAdapter(getApplicationContext(), R.id.tvUserState);
+        lvUsrList.setAdapter(userListAdapter);
 
+        // 왼->오른쪽 스와이프로 사이드 바 여는 모드 잠금
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    // 유저 리스트에 유저 추가
+    // 유저 리스트 상태 변경시, User객체의 상태만 변경된 채로
+    // userListAdapter.notifychanges하면 된다.
+    private void InitUserList(){
+       userListAdapter.add(users[0]);
+        userListAdapter.add(users[1]);
+        userListAdapter.add(users[2]);
+    }
+
+    private void ShowNMap(){
+        // 지도 출력
+        MapContainer = (LinearLayout) findViewById(R.id.nmap);
+        mMapView = new NMapView(this);
+        mMapView.setClientId(AppConfig.CLIENT_ID);
+        mMapView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
+        MapContainer.addView(mMapView);
+        mMapView.setClickable(true);
+        mMapView.setOnMapStateChangeListener(this);
+        mMapView.setOnMapViewTouchEventListener(this);
+        mMapController = mMapView.getMapController();
+    }
+
+    private void ShowMarkersOnMap(){
+        // 마커 생성
+        mMapViewerResourceProvider = new NMapViewerResourceProvider(this);
+        mOverlayManager = new NMapOverlayManager(this, mMapView, mMapViewerResourceProvider);
+        testOverlayMaker();
+    }
+
+    private void ShowMyCurrentLocation(){
+        // 현재 위치 표시
+        //위치 관리 메니저 객체 생성
+        mMapLocationManager = new NMapLocationManager(this);
+        //현재 위치 변경 시 호출되는 콜백 인터페이스를 설정한다.
+        mMapLocationManager.setOnLocationChangeListener(onMyLocationChangeListener);
+        //NMapMyLocationOverlay 객체 생성
+        mMyLocationOverlay = mOverlayManager.createMyLocationOverlay(mMapLocationManager,
+                mMapCompassManager);
+        startMyLocation(); //내 위치 찾기 함수 호출
     }
 
     @Override
@@ -241,35 +283,10 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
         InitVariables();
         InitSettings();
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.game_activity_drawer);
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-
-
-        // 지도 출력
-        MapContainer = (LinearLayout) findViewById(R.id.nmap);
-        mMapView = new NMapView(this);
-        mMapView.setClientId(CLIENT_ID);
-        mMapView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
-        MapContainer.addView(mMapView);
-        mMapView.setClickable(true);
-        mMapView.setOnMapStateChangeListener(this);
-        mMapView.setOnMapViewTouchEventListener(this);
-        mMapController = mMapView.getMapController();
-
-        // 마커 생성
-        mMapViewerResourceProvider = new NMapViewerResourceProvider(this);
-        mOverlayManager = new NMapOverlayManager(this, mMapView, mMapViewerResourceProvider);
-        testOverlayMaker();
-
-        // 현재 위치 표시
-        //위치 관리 메니저 객체 생성
-        mMapLocationManager = new NMapLocationManager(this);
-         //현재 위치 변경 시 호출되는 콜백 인터페이스를 설정한다.
-        mMapLocationManager.setOnLocationChangeListener(onMyLocationChangeListener);
-         //NMapMyLocationOverlay 객체 생성
-        mMyLocationOverlay = mOverlayManager.createMyLocationOverlay(mMapLocationManager,
-                mMapCompassManager);
-        startMyLocation(); //내 위치 찾기 함수 호출
+        InitUserList();
+        ShowNMap();
+        ShowMarkersOnMap();
+        ShowMyCurrentLocation();
 
         btnTeamChat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -305,79 +322,22 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
             super.onBackPressed();
         }
     }
+    public class TestUser{
 
-    /*
-        public static String getReverseGeoCodingInfo(double longitude, double latitude) {
-            StringBuffer sb = new StringBuffer();
-            String longi = String.valueOf(longitude);
-            String lati = String.valueOf(latitude);
-            BufferedReader br = null;
-            InputStreamReader in = null;
-            HttpsURLConnection httpConn = null;
-            String address = null;
+        public int team;
+        public int state;
 
-
-            // TODO Auto-generated method stub
-            //"https://openapi.naver.com/v1/map/reversegeocode?query=127.1141382,37.3599968"
-            try {
-                URL url = new URL("https://openapi.naver.com/v1/map/reversegeocode?query=" + longi + "," + lati);
-                httpConn = (HttpsURLConnection) url.openConnection();
-                httpConn.setRequestProperty("X-Naver-Client-Id", "bDBAfTyCHhTCnzNjWBXi");
-                httpConn.setRequestProperty("X-Naver-Client-Secret", "KxH3N2Bicc");
-                httpConn.setRequestMethod("GET");
-                httpConn.connect();
-
-                //int len = conn.getContentLength();
-                in = new InputStreamReader(httpConn.getInputStream());
-                br = new BufferedReader(in);
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line).append("\n");
-                }
-                //return sb.toString();
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            JSONObject jsonObject;
-            JSONObject jsonObject2;
-            JSONObject jsonObject3;
-            JSONArray jsonArray;
-
-
-            try {
-                jsonObject = new JSONObject(sb.toString());
-                jsonObject = (JSONObject) jsonObject.get("result");
-                jsonArray = (JSONArray) jsonObject.get("items");
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    jsonObject2 = (JSONObject) jsonArray.get(i);
-                    if (null != jsonObject2.get("address")) {
-                        address = (String) jsonObject2.get("address").toString();
-                        Log.v("qioip", address);
-
-                    }
-                }
-
-                br.close();
-                in.close();
-                httpConn.disconnect();
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            if (address == null || address.isEmpty()) {
-                return "위치 파악 중";
-            } else {
-                return address;
-            }
+        public int getTeam() {
+            return team;
         }
-*/
+
+        public int getState(){
+            return state;
+        }
+
+        TestUser(int team, int state){
+            this.team = team;
+            this.state = state;
+        }
+    };
 }
