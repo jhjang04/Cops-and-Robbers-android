@@ -226,11 +226,9 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
     private void InitSettings(){
         lvUsrList = (ListView)findViewById(R.id.game_activity_userlist);
-
-        //lvUsrList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, navItems));
-        //lvNavList.setOnItemClickListener(new DrawerItemClickListener());
-        userListAdapter = new UserListAdapter(getApplicationContext(), R.id.tvUserState);
+        userListAdapter = new UserListAdapter(getApplicationContext(), R.id.tvUser);
         lvUsrList.setAdapter(userListAdapter);
+
 
         // 왼->오른쪽 스와이프로 사이드 바 여는 모드 잠금
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -323,25 +321,5 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
             super.onBackPressed();
         }
     }
-    public class TestUser{
 
-        public int team;
-        public int state;
-        public String nickname;
-
-        public int getTeam() {
-            return team;
-        }
-
-        public int getState(){
-            return state;
-        }
-        public String getNickName(){return nickname;}
-
-        TestUser(int team, int state, String nickname){
-            this.team = team;
-            this.state = state;
-            this.nickname = nickname;
-        }
-    };
 }

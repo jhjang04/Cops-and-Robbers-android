@@ -11,19 +11,23 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import car.adroid.util.TeamListAdapter;
+
 public class TeamActivity extends FragmentActivity {
 
     private Button btnToCop, btnToRobber,btnStart;
     private ListView lvCop, lvRobber;
-    ArrayList<String> listCop,listRobber;
-    ArrayAdapter<String> adapterCop, adapterRobber;
+
+    private TestUser[] users = new TestUser[]{new TestUser(1,1,"cop"), new TestUser(2,2,"robber")};
+    ArrayAdapter<TestUser> adapterCop, adapterRobber;
+
     private String userName = "test";
 
 
 
     private void InitList(){
-        listCop.add(userName);
-        listRobber.add("testItem2");
+        adapterCop.add(users[0]);
+        adapterRobber.add(users[1]);
         NotifyChange();
 
     }
@@ -58,14 +62,11 @@ public class TeamActivity extends FragmentActivity {
         lvCop = (ListView)findViewById(R.id.listCop);
         lvRobber = (ListView)findViewById(R.id.listRobber);
 
-        listCop = new ArrayList<String>();
-        listRobber = new ArrayList<String>();
-        adapterCop = new ArrayAdapter<String>(this, R.layout.listview_text_layout, listCop);
-        adapterRobber = new ArrayAdapter<String>(this, R.layout.listview_text_layout,listRobber);
-
     }
 
     private void InitSettings(){
+        adapterCop = new TeamListAdapter(getApplicationContext(), R.id.tvTeam);
+        adapterRobber = new TeamListAdapter(getApplicationContext(), R.id.tvTeam);
         lvCop.setAdapter(adapterCop);
         lvRobber.setAdapter(adapterRobber);
     }
@@ -87,18 +88,22 @@ public class TeamActivity extends FragmentActivity {
         btnToCop.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+                /*
                 // 리스트의 아이템 이동
                 if(IsMovable(listRobber))
                     MoveToList(listRobber,listCop);
+                    */
             }
         });
 
         btnToRobber.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+               /*
                 // 리스트의 아이템 이동
                 if(IsMovable(listCop))
                     MoveToList(listCop,listRobber);
+                */
             }
         });
 
