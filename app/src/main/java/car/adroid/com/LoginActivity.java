@@ -19,10 +19,10 @@ import org.json.JSONObject;
 
 import car.adroid.conn.HttpConnector;
 import car.adroid.data.AppData;
+import car.adroid.util.ProgressThread;
 import car.adroid.util.SimpleLogger;
 
 public class LoginActivity extends FragmentActivity {
-
     private static final int MSG_REQUEST = 0;
 
     private Context mContext = this;
@@ -36,7 +36,7 @@ public class LoginActivity extends FragmentActivity {
     private String roomNum;
     private String roomPwd;
 
-    private Thread mReqThread = new Thread() {
+    private ProgressThread mReqThread = new ProgressThread(mContext) {
         public void run() {
             AppData appData = AppData.getNewInsance(getApplicationContext());
 
@@ -62,7 +62,6 @@ public class LoginActivity extends FragmentActivity {
                     }
                 }
                 appData.updateGameBaseInfo( room_id, user_no, userName , team);
-
             } catch (Exception e) {
                 SimpleLogger.info(LoginActivity.this, e.toString());
                 result = "ERROR";
