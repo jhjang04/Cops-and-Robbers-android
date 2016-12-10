@@ -84,10 +84,10 @@ public class LocationService extends Service {
     LocationListener mListener = new LocationListener() {
         public void onLocationChanged(Location location) {
 
-            AppData data = AppData.getInstance(mContext);
+            AppData data = AppData.getInstance(getApplicationContext());
 //            data.setLatitude(location.getLatitude());
 //            data.setLongitude(location.getLongitude());
-            data.updateLocalLocation(mContext , location.getLatitude() , location.getLongitude());
+            data.updateLocalLocation(location.getLatitude() , location.getLongitude());
             SimpleLogger.debug(mContext , "lat : " + location.getLatitude() + ", lot : " + location.getLongitude() + "speed : " + location.getSpeed());
         }
 

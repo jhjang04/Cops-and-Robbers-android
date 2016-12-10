@@ -71,7 +71,8 @@ public class SimpleLogger extends Service {
     public void onCreate() {
         super.onCreate();
         if(!AppConfig.DEBUG){
-            stopService(new Intent(mContext , SimpleLogger.class));
+            //stopService(new Intent(mContext , SimpleLogger.class));\
+            stopSelf();
             return;
         }
         mHandler = new Handler();

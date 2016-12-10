@@ -7,10 +7,12 @@ import android.database.sqlite.SQLiteStatement;
 import android.location.Location;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import car.adroid.config.AppConfig;
+import car.adroid.util.DateUtil;
 
 /**
  * Created by jhjang04 on 2016-11-24.
@@ -19,6 +21,9 @@ import car.adroid.config.AppConfig;
 public class AppData {
 
     private static AppData INSTANCE = null;
+
+    private Context mAppContext = null;
+
     private int mRoomId = 0;
     private int mUserNo = 0;
     private String mNickName = "";
@@ -28,8 +33,8 @@ public class AppData {
     private int mReadyStatus = User.READY_STATUS_NOT_READY;
     private int mState = 0;
 
-    private ArrayList<User> mCops = null;
-    private ArrayList<User> mRobbers = null;
+    private ArrayList<User> mCops = new ArrayList<User>();
+    private ArrayList<User> mRobbers = new ArrayList<User>();
     private int mLastChatIdx = 0;
     private int mLastTeamChatIdx = 0;
 
@@ -86,17 +91,34 @@ public class AppData {
         return mLastTeamChatIdx;
     }
 
+    private AppData(Context appContext){
+        mAppContext = appContext;
+    }
+
     public static AppData getInstance(Context context) {
         if(INSTANCE == null){
-            INSTANCE  = new AppData();
-            INSTANCE.getData(context);
+            INSTANCE  = new AppData(context);
+            INSTANCE.getData();
         }
         return INSTANCE;
     }
 
-    public void getData(Context context){
-        AppData data = getInstance(context);
+    public static AppData getNewInsance(Context context){
         AppDBHelper dbHelper = new AppDBHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        SQLiteStatement stmtDeleteUser = db.compileStatement("delete from user");
+        stmtDeleteUser.executeUpdateDelete();
+
+        SQLiteStatement stmtDeleteChat = db.compileStatement("delete from chat");
+        stmtDeleteChat.executeUpdateDelete();
+        db.close();
+
+        INSTANCE  = new AppData(context);
+        return INSTANCE;
+    }
+
+    public void getData(){
+        AppDBHelper dbHelper = new AppDBHelper(mAppContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         getLocalInfoAtDB(db);
         getUsersInfoAtDB(db);
@@ -138,7 +160,8 @@ public class AppData {
 //                this.mCops.add(user);
 //            else
 //                this.mRobbers.add(user);
-            aplyUser(user);
+
+            aplyUser(null , user);
         }
     }
 
@@ -170,26 +193,31 @@ public class AppData {
         return mState == User.STATE_ALIVE && mWarnigCount > 0;
     }
 
-    synchronized public void aplyUser(User user)
+    synchronized public void aplyUser(SQLiteDatabase db , User user)
     {
         if(mCops == null) mCops = new ArrayList<User>();
         if(mRobbers == null) mRobbers= new ArrayList<User>();
         if(mUserIdxMap == null) mUserIdxMap = new HashMap<Integer , Integer>();
         if(mUserTeamMap == null) mUserTeamMap = new HashMap<Integer , Integer>();
-        ArrayList<User> allyArray = (user.getTeam() == User.TEAM_COP) ? mCops : mRobbers;
-        ArrayList<User> enemyArray = (user.getTeam() == User.TEAM_ROBBER) ? mCops : mRobbers;
+
+        ArrayList<User> allyArray = ((mUserTeamMap.get(user.getUserNo()) != null ? mUserTeamMap.get(user.getUserNo()) : user.getTeam()) == User.TEAM_COP) ? mCops : mRobbers;
+        ArrayList<User> enemyArray = ((mUserTeamMap.get(user.getUserNo()) != null ? mUserTeamMap.get(user.getUserNo()) : user.getTeam()) == User.TEAM_ROBBER) ? mCops : mRobbers;
         User targetUser = this.getUser(user.getUserNo());
+        boolean isInsert = targetUser == null;
 
         if(targetUser == null ){        //new user
-            targetUser = new User(user);
+            targetUser = user;
             mUserTeamMap.put(targetUser.getUserNo() , targetUser.getTeam());
             mUserIdxMap.put(targetUser.getUserNo() , allyArray.size());
             allyArray.add(targetUser);
         }
         else{   //exists
             targetUser.cloneUser(user);
-            if(!mUserTeamMap.get(user.getUserNo()).equals(user.getTeam())) {
-                allyArray.remove(getUserIdx(user.getUserNo()));
+
+            if(!mUserTeamMap.get(targetUser.getUserNo()).equals(targetUser.getTeam())) {
+//                allyArray.remove(getUserIdx(targetUser.getUserNo()).intValue());
+                allyArray.remove(targetUser);
+
                 for(int i=0 ; i<allyArray.size() ; i++){
                     User tmpUser = allyArray.get(i);
                     mUserIdxMap.put(tmpUser.getUserNo() , i);
@@ -199,7 +227,31 @@ public class AppData {
                 enemyArray.add(targetUser);
             }
         }
+        if(db == null) return;
+        String strSql = "";
+        if(isInsert) {
+            strSql = "insert into user(user_no , nickname , team , ready_status , state , latitude , longitude , team_select_time , last_access) values( ? , ? , ? , ? , ? , ? , ? , ? , ? )";
+        }
+        else {
+            strSql = "update user set user_no = ? , nickname = ? , team = ? , ready_status = ? , state = ? , latitude = ? , longitude = ? , team_select_time = ? , last_access = ? where user_no = ?";
+        }
+        SQLiteStatement stmt = db.compileStatement(strSql);
+        stmt.bindDouble(1 , user.getUserNo());
+        stmt.bindString(2 , user.getNickName());
+        stmt.bindLong(3 , user.getTeam());
+        stmt.bindLong(4 , user.getReadyStatus());
+        stmt.bindLong(5, user.getState());
+        stmt.bindDouble(6 , user.getLatitude());
+        stmt.bindDouble(7 , user.getLongitude());
+        stmt.bindString(8 , user.getTeamSelectTime());
+        stmt.bindString(9 , user.getLastAccess());
+        if(!isInsert){
+            stmt.bindLong(10 , user.getUserNo());
+        }
+
+        stmt.executeUpdateDelete();
     }
+
 
     private User getUser(int userNo) {
         Integer idx = getUserIdx(userNo);
@@ -215,58 +267,91 @@ public class AppData {
     }
 
 
-    public int updateLocalLocation(Context context , double latitude , double longitude ){
+    public void updateLocalLocation(double latitude , double longitude ){
         mLatitude = latitude;
         mLongitude = longitude;
-        AppDBHelper dbHelper = new AppDBHelper(context);
+        AppDBHelper dbHelper = new AppDBHelper(mAppContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         SQLiteStatement stmt = db.compileStatement("UPDATE LOCAL_INFO SET LATITUDE = ? , LONGITUDE = ?");
         stmt.bindDouble(1,latitude);
         stmt.bindDouble(2,longitude);
-        int rtn = stmt.executeUpdateDelete();
+        stmt.executeUpdateDelete();
         db.close();
-        return rtn;
     }
 
-    public int updateGameBaseInfo(Context context , int roomId , int userNo , String nickname , int team){
+    public void updateGameBaseInfo(int roomId , int userNo , String nickname , int team){
         mRoomId = roomId;
         mUserNo = userNo;
         mNickName = nickname;
         mTeam = team;
+        int rtn = 0;
 
-        AppDBHelper dbHelper = new AppDBHelper(context);
+        AppDBHelper dbHelper = new AppDBHelper(mAppContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        SQLiteStatement stmt = db.compileStatement("UPDATE LOCAL_INFO SET ROOM_ID = ? , USER_NO = ? , NICKNAME = ? , TEAM = ?");
-        stmt.bindLong(1 , roomId);
-        stmt.bindLong(2 , userNo);
-        stmt.bindString(3 , nickname);
-        stmt.bindLong(4 , team);
+        SQLiteStatement stmtLocalInfo = db.compileStatement("UPDATE LOCAL_INFO SET ROOM_ID = ? , USER_NO = ? , NICKNAME = ? , TEAM = ?");
+        stmtLocalInfo.bindLong(1 , roomId);
+        stmtLocalInfo.bindLong(2 , userNo);
+        stmtLocalInfo.bindString(3 , nickname);
+        stmtLocalInfo.bindLong(4 , team);
 
-        int rtn = stmt.executeUpdateDelete();
+        stmtLocalInfo.executeUpdateDelete();
+
+        User user = new User();
+        Date date = new Date();
+
+        user.setUserNo(userNo);
+        user.setTeam(team);
+        user.setNickName(nickname);
+        user.setReadyStatus(User.READY_STATUS_NOT_READY);
+        user.setLastAccess(DateUtil.getCurrent());
+        user.setTeamSelectTime(DateUtil.getCurrent());
+
+        aplyUser(db , user);
+
         db.close();
-        return rtn;
     }
 
-    public int updateTeam(Context context , int team){
-        AppDBHelper dbHelper = new AppDBHelper(context);
+    public void updateTeam(int team){
+        User user = getUser(mUserNo);
+        mTeam = team;
+        user.setTeam(team);
+
+        AppDBHelper dbHelper = new AppDBHelper(mAppContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        aplyUser( db , user );
+
         SQLiteStatement stmt = db.compileStatement("UPDATE LOCAL_INFO SET TEAM = ?");
         stmt.bindLong(1 , team);
 
-        int rtn = stmt.executeUpdateDelete();
+        stmt.executeUpdateDelete();
         db.close();
-        return rtn;
+
+    }
+
+    public void ready(){
+        User user = getUser(mUserNo);
+        mReadyStatus = User.READY_STATUS_READY;
+        user.setReadyStatus(User.READY_STATUS_READY);
+
+        AppDBHelper dbHelper = new AppDBHelper(mAppContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        aplyUser( db , user );
+
+        SQLiteStatement stmt = db.compileStatement("update local_info set ready_status = ?");
+        stmt.bindLong(1 , User.READY_STATUS_READY );
+
+        stmt.executeUpdateDelete();
+        db.close();
     }
 
 
-    public int updateState(Context context , int state) {
-        AppDBHelper dbHelper = new AppDBHelper(context);
+    public void updateState(int state) {
+        AppDBHelper dbHelper = new AppDBHelper(mAppContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         SQLiteStatement stmt = db.compileStatement("UPDATE LOCAL_INFO SET STATE = ?");
         stmt.bindLong(1 , state);
 
-        int rtn = stmt.executeUpdateDelete();
+        stmt.executeUpdateDelete();
         db.close();
-        return rtn;
     }
 }

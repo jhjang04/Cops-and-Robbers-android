@@ -1,24 +1,13 @@
 package car.adroid.com;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.graphics.Color;
-import android.provider.Settings;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
+import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,24 +19,11 @@ import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapLocationManager;
 import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.maplib.NGeoPoint;
-import com.nhn.android.maps.nmapdata.n;
 import com.nhn.android.maps.nmapmodel.NMapError;
 import com.nhn.android.maps.overlay.NMapPOIdata;
 import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
 import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import car.adroid.NMap.NMapPOIflagType;
 import car.adroid.NMap.NMapViewerResourceProvider;
@@ -66,7 +42,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
 
     private UserListAdapter userListAdapter ;
-    private TestUser[] users = new TestUser[]{new TestUser(1,1,"cop"), new TestUser(2,1,"robber"), new TestUser(2,2,"dead")};
+    private User[] users = new User[2];
     private ListView lvUsrList;
 
 
@@ -238,9 +214,9 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
     // 유저 리스트 상태 변경시, User객체의 상태만 변경된 채로
     // userListAdapter.notifychanges하면 된다.
     private void InitUserList(){
-       userListAdapter.add(users[0]);
-        userListAdapter.add(users[1]);
-        userListAdapter.add(users[2]);
+//       userListAdapter.add(users[0]);
+//        userListAdapter.add(users[1]);
+//        userListAdapter.add(users[2]);
     }
 
     private void ShowNMap(){

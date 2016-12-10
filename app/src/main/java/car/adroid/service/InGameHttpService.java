@@ -15,6 +15,7 @@ import java.util.Map;
 import car.adroid.config.AppConfig;
 import car.adroid.conn.HttpConnector;
 import car.adroid.data.AppData;
+import car.adroid.util.SimpleLogger;
 
 public class InGameHttpService extends Service {
 
@@ -39,25 +40,29 @@ public class InGameHttpService extends Service {
         mRunnable = new Runnable() {
             public void run() {
                 mHandler.postDelayed(mRunnable, AppConfig.HTTP_REQUEST_REPEAT_INTERVAL);
+                new Thread(){
+                    @Override
+                    public void run() {
+                        super.run();
+                        AppData data = AppData.getInstance(getApplicationContext());
 
-                AppData data = AppData.getInstance(mContext);
-
-                Map params = new HashMap<>();
-                params.put("room_id",data.getRoomId());
-                params.put("user_no",data.getUserNo());
-                params.put("latitude",data.getLatitude());
-                params.put("longitude",data.getLongitude());
-                params.put("state",data.getState());
-                params.put("lastChatIdx",data.getLastChatIdx());
-                params.put("lastTeamChatIdx",data.getLastTeamChatIdx());
-
-                try {
-                    JSONObject rst = HttpConnector.SimpleRequest("playing",params);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                sendBroadcast(mBroadcast);
+                        Map params = new HashMap<>();
+                        params.put("room_id",data.getRoomId());
+                        params.put("user_no",data.getUserNo());
+                        params.put("latitude",data.getLatitude());
+                        params.put("longitude",data.getLongitude());
+                        params.put("state",data.getState());
+                        params.put("lastChatIdx",data.getLastChatIdx());
+                        params.put("lastTeamChatIdx",data.getLastTeamChatIdx());
+                        try {
+                            JSONObject rst = HttpConnector.SimpleRequest("playing",params);
+                        } catch (Exception e) {
+                            SimpleLogger.debug(mContext , e.toString());
+                            e.printStackTrace();
+                        }
+                        sendBroadcast(mBroadcast);
+                    }
+                }.start();
             }
         };
         mHandler.post(mRunnable);

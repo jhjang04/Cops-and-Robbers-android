@@ -3,6 +3,9 @@ package car.adroid.data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import car.adroid.config.AppConfig;
+import car.adroid.util.DateUtil;
+
 /**
  * Created by jjh on 2016-11-24.
  */
@@ -24,8 +27,13 @@ public class User {
 
     private double mLatitude = 0;
     private double mLongitude = 0;
+    private String mTeamSelectTime = "";
+    private String mLastAccess = "";
 
-    public User(){}
+    public User(){
+        mLatitude = 0;
+        mLongitude = 0;
+    }
     public User(User user){
         this.cloneUser(user);
     }
@@ -50,10 +58,17 @@ public class User {
             mTeam = jsonUser.getInt("team");
             mReadyStatus = jsonUser.getInt("ready_status");
             mState = jsonUser.getInt("state");
+            mTeamSelectTime = jsonUser.getString("team_select_time");
+            mLastAccess= jsonUser.getString("last_access");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
             mLatitude = jsonUser.getDouble("latitude");
             mLongitude = jsonUser.getDouble("longitude");
         } catch (JSONException e) {
-            e.printStackTrace();
+            mLatitude = 0;
+            mLongitude = 0;
         }
     }
 
@@ -113,5 +128,29 @@ public class User {
     public void setLongitude(double mLongitude) {
         this.mLongitude = mLongitude;
     }
+
+    public String getTeamSelectTime() { return mTeamSelectTime; }
+
+    public void setTeamSelectTime(String mTeamSelectTime) {
+        this.mTeamSelectTime = mTeamSelectTime;
+    }
+
+    public String getLastAccess() {
+        return mLastAccess;
+    }
+
+    public void setLastAccess(String mLastAccess) {
+        this.mLastAccess = mLastAccess;
+    }
+
+    public boolean isValid(){
+        try {
+            return DateUtil.getTimeGapMiliseconds(DateUtil.getCurrent() , mLastAccess) < AppConfig.LIMIT_ACCESS_MIILISECONDS;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
 }

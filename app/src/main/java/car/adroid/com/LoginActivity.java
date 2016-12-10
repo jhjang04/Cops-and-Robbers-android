@@ -3,8 +3,9 @@ package car.adroid.com;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
-import android.text.method.KeyListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -14,7 +15,6 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import car.adroid.conn.HttpConnector;
@@ -22,6 +22,8 @@ import car.adroid.data.AppData;
 import car.adroid.util.SimpleLogger;
 
 public class LoginActivity extends FragmentActivity {
+
+    private static final int MSG_REQUEST = 0;
 
     private Context mContext = this;
     private Button btnNext;
@@ -33,6 +35,71 @@ public class LoginActivity extends FragmentActivity {
     private String userName;
     private String roomNum;
     private String roomPwd;
+
+    private Thread mReqThread = new Thread() {
+        public void run() {
+            AppData appData = AppData.getNewInsance(getApplicationContext());
+
+            JSONObject response = null;
+            String result;
+            int room_id = 0;
+            int user_no = 0;
+            int team = 0;
+            try {
+                if (rdCreate.isChecked()) {   //if make Room
+                    response = new HttpConnector().makeRoom(roomPwd, userName);
+                    result = response.getString("result");
+                    room_id = response.getInt("room_id");
+                    user_no = response.getInt("user_no");
+                    team = response.getInt("team");
+                } else {    //if join Room
+                    room_id = Integer.parseInt(roomNum);
+                    response = new HttpConnector().joinRoom(room_id, roomPwd, userName);
+                    result = response.getString("result");
+                    if(result.equals("PASS")){
+                        user_no = response.getInt("user_no");
+                        team = response.getInt("team");
+                    }
+                }
+                appData.updateGameBaseInfo( room_id, user_no, userName , team);
+
+            } catch (Exception e) {
+                SimpleLogger.info(LoginActivity.this, e.toString());
+                result = "ERROR";
+                e.printStackTrace();
+
+            }
+            Bundle data = new Bundle();
+            data.putString("result",result);
+            Message msg = new Message();
+            msg.what= MSG_REQUEST;
+            msg.setData(data);
+            mHandler.sendMessage(msg);
+        }
+    };
+
+
+    private Handler mHandler = new Handler(){
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case MSG_REQUEST:{
+                    String result = msg.getData().getString("result");
+                    if("PASS".equals(result)){
+                        Intent intent = new Intent(mContext , TeamActivity.class);
+                        startActivity(intent);
+                    }
+                    else if("FAIL".equals(result)){
+                        Toast.makeText(mContext , "not exists room info" , Toast.LENGTH_LONG).show();
+                    }
+                    else{
+                        Toast.makeText(mContext , "connection fail" , Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
+            }
+        }
+    };
 
     // 값을 받아온다.
     private void SetUserInfo(){
@@ -130,44 +197,7 @@ public class LoginActivity extends FragmentActivity {
                     return;
                 }
 
-                new Thread() {
-                    public void run() {
-                        Intent intent = new Intent(LoginActivity.this, TeamActivity.class);
-                        intent.putExtra("name", userName);
-                        AppData appData = AppData.getInstance(mContext);
-
-                        JSONObject response = null;
-                        String result;
-                        int room_id = 0;
-                        int user_no = 0;
-                        int team = 0;
-                        try {
-                            if (rdCreate.isChecked()) {   //if make Room
-                                response = new HttpConnector().makeRoom(roomPwd, userName);
-                                result = response.getString("result");
-                                room_id = response.getInt("room_id");
-                                user_no = response.getInt("user_no");
-                                team = response.getInt("team");
-                            } else {    //if join Room
-                                room_id = Integer.parseInt(roomNum);
-                                response = new HttpConnector().joinRoom(room_id, roomPwd, userName);
-                                result = response.getString("result");
-                                if(result.equals("PASS")){
-                                    user_no = response.getInt("user_no");
-                                    team = response.getInt("team");
-                                }
-                                else{
-                                    Toast.makeText(mContext,"방 정보가 없습니다.",Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                            appData.updateGameBaseInfo(mContext, room_id, user_no, userName , team);
-                            startActivity(intent);
-                        } catch (JSONException e) {
-                            SimpleLogger.info(LoginActivity.this, e.toString());
-                            e.printStackTrace();
-                        }
-                    }
-                }.start();
+                mReqThread.start();
             }
         });
     }

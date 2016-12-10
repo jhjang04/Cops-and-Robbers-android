@@ -25,4 +25,7 @@ public class AppConfig {
     public static final String BROADCAST_ACTION_TEAM_SELECT = "car.android.com.TeamSelectService.BROADCAST";
     public static final String BROADCAST_ACTION_IN_GAME = "car.android.com.inGameService.BROADCAST";
 
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final long LIMIT_ACCESS_MIILISECONDS = 5000;
+
 }
