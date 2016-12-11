@@ -5,28 +5,8 @@
     android:orientation="vertical"
     android:id="@+id/bgGlobalChat">
 
-    <ListView
-        android:id="@+id/lvGlobalChat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="80dp"
-        android:dividerHeight="0px"
-        android:divider="#ffffff"
-        android:clickable="false"
-        android:focusable="false"
-        android:listSelector="#00000000">
-    </ListView>
 
-    <RelativeLayout
-        android:id="@+id/form"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-
-        <EditText
+    <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
@@ -50,6 +30,24 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true" />
-    </RelativeLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="31dp"
+    android:layout_above="@+id/btnGlobalSend"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true">
+    <ListView
+        android:id="@+id/lvGlobalChat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:dividerHeight="0px"
+        android:divider="#ffffff"
+        android:clickable="false"
+        android:focusable="false"
+        android:listSelector="#00000000"
+        >
+    </ListView>
+</LinearLayout>
 
 </RelativeLayout>

@@ -15,7 +15,6 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,7 +34,7 @@ public class GlobalChatActivity extends FragmentActivity {
     private Context mContext = this;
 
     private ChatArrayAdapter chatArrayAdapter;
-    private RelativeLayout layout;
+//    private RelativeLayout layout;
     private ListView listView;
     private EditText chatText;
     private Button buttonSend;
@@ -51,7 +50,7 @@ public class GlobalChatActivity extends FragmentActivity {
         chatText = (EditText) findViewById(R.id.tvGlobalMessage);
         buttonSend = (Button) findViewById(R.id.btnGlobalSend);
         listView = (ListView) findViewById(R.id.lvGlobalChat);
-        layout = (RelativeLayout) findViewById(R.id.bgGlobalChat);
+//        layout = (RelativeLayout) findViewById(R.id.bgGlobalChat);
 
         // hide keyboard when touching background
 //        listView.setOnTouchListener(new View.OnTouchListener(){
@@ -80,8 +79,8 @@ public class GlobalChatActivity extends FragmentActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 listView.setFocusable(!hasFocus);
-                layout.setFocusable(!hasFocus);
-                findViewById(R.id.form).setFocusable(!hasFocus);
+//                layout.setFocusable(!hasFocus);
+                //findViewById(R.id.form).setFocusable(!hasFocus);
             }
         });
 
@@ -209,10 +208,11 @@ public class GlobalChatActivity extends FragmentActivity {
     }
 
     public void refreshScreen(){
-        
+
         AppData data = AppData.getInstance(getApplicationContext());
         ArrayList<ChatMessage> chatList = data.getChatList();
 
+        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_DISABLED);
         chatArrayAdapter.clear();
         chatArrayAdapter.addAll(chatList);
         chatArrayAdapter.notifyDataSetChanged();
