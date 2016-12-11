@@ -36,46 +36,51 @@ public class LoginActivity extends FragmentActivity {
     private String roomNum;
     private String roomPwd;
 
-    private ProgressThread mReqThread = new ProgressThread(mContext) {
-        public void run() {
-            AppData appData = AppData.getNewInsance(getApplicationContext());
 
-            JSONObject response = null;
-            String result;
-            int room_id = 0;
-            int user_no = 0;
-            int team = 0;
-            try {
-                if (rdCreate.isChecked()) {   //if make Room
-                    response = new HttpConnector().makeRoom(roomPwd, userName);
-                    result = response.getString("result");
-                    room_id = response.getInt("room_id");
-                    user_no = response.getInt("user_no");
-                    team = response.getInt("team");
-                } else {    //if join Room
-                    room_id = Integer.parseInt(roomNum);
-                    response = new HttpConnector().joinRoom(room_id, roomPwd, userName);
-                    result = response.getString("result");
-                    if(result.equals("PASS")){
+    private void sendRequest(){
+        new ProgressThread(mContext) {
+            public void run() {
+                AppData appData = AppData.getNewInsance(getApplicationContext());
+
+                JSONObject response = null;
+                String result;
+                int room_id = 0;
+                int user_no = 0;
+                int team = 0;
+                try {
+                    if (rdCreate.isChecked()) {   //if make Room
+                        response = new HttpConnector().makeRoom(roomPwd, userName);
+                        result = response.getString("result");
+                        room_id = response.getInt("room_id");
                         user_no = response.getInt("user_no");
                         team = response.getInt("team");
+                    } else {    //if join Room
+                        room_id = Integer.parseInt(roomNum);
+                        response = new HttpConnector().joinRoom(room_id, roomPwd, userName);
+                        result = response.getString("result");
+                        if(result.equals("PASS")){
+                            user_no = response.getInt("user_no");
+                            team = response.getInt("team");
+                        }
                     }
-                }
-                appData.updateGameBaseInfo( room_id, user_no, userName , team);
-            } catch (Exception e) {
-                SimpleLogger.info(LoginActivity.this, e.toString());
-                result = "ERROR";
-                e.printStackTrace();
+                    appData.updateGameBaseInfo( room_id, user_no, userName , team);
+                } catch (Exception e) {
+                    SimpleLogger.info(LoginActivity.this, e.toString());
+                    result = "ERROR";
+                    e.printStackTrace();
 
+                }
+                Bundle data = new Bundle();
+                data.putString("result",result);
+                Message msg = new Message();
+                msg.what= MSG_REQUEST;
+                msg.setData(data);
+                mHandler.sendMessage(msg);
             }
-            Bundle data = new Bundle();
-            data.putString("result",result);
-            Message msg = new Message();
-            msg.what= MSG_REQUEST;
-            msg.setData(data);
-            mHandler.sendMessage(msg);
-        }
-    };
+        }.start();
+    }
+
+
 
 
     private Handler mHandler = new Handler(){
@@ -196,7 +201,7 @@ public class LoginActivity extends FragmentActivity {
                     return;
                 }
 
-                mReqThread.start();
+                sendRequest();
             }
         });
     }
