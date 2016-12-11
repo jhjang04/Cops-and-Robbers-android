@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import car.adroid.config.AppConfig;
 import car.adroid.data.AppData;
@@ -22,6 +23,7 @@ public class TeamActivity extends FragmentActivity {
     private Context mContext= this;
     private Button btnToCop, btnToRobber,btnStart;
     private ListView lvCop, lvRobber;
+    private TextView tvRoomInfo;
 
     ArrayAdapter<User> adapterCop, adapterRobber;
     BroadcastReceiver mReceiver = null;
@@ -31,9 +33,13 @@ public class TeamActivity extends FragmentActivity {
     }
 
     private void NotifyChange(){
-        AppData appData = AppData.getInstance(getApplicationContext());
-        ((TeamListAdapter) adapterCop).setList(appData.getCops());
-        ((TeamListAdapter) adapterRobber).setList(appData.getRobbers());
+        AppData data = AppData.getInstance(getApplicationContext());
+        adapterCop.clear();
+        adapterRobber.clear();
+
+        adapterCop.addAll(data.getCops());
+        adapterRobber.addAll(data.getRobbers());
+
         adapterCop.notifyDataSetChanged();
         adapterRobber.notifyDataSetChanged();
     }
@@ -45,7 +51,11 @@ public class TeamActivity extends FragmentActivity {
         btnStart = (Button)findViewById(R.id.btnStart);
         lvCop = (ListView)findViewById(R.id.listCop);
         lvRobber = (ListView)findViewById(R.id.listRobber);
+        tvRoomInfo = (TextView)findViewById(R.id.tv_team_room_info);
+        AppData data = AppData.getInstance(getApplicationContext());
 
+        String roomInfo  =  "" + data.getRoomId() + " / " + getIntent().getStringExtra("pwd");
+        tvRoomInfo.setText(roomInfo);
     }
 
     private void InitSettings(){
@@ -130,7 +140,7 @@ public class TeamActivity extends FragmentActivity {
 
     @Override
     protected void onPause() {
-        unregisterReceiver(mReceiver);
         super.onPause();
+        unregisterReceiver(mReceiver);
     }
 }

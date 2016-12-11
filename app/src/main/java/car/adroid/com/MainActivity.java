@@ -57,8 +57,6 @@ public class MainActivity extends FragmentActivity {
                     //해당 권한이 승낙된 경우.
                     mStarted = true;
                     startService(new Intent( mContext , SimpleLogger.class));
-                    startService(new Intent( mContext , LocationService.class));
-                    SimpleLogger.debug(mContext , "start service..");
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 } else {
                     //해당 권한이 거절된 경우.

@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import car.adroid.com.R;
@@ -26,6 +27,18 @@ public class UserListAdapter extends ArrayAdapter<User> {
     public void add(User user) {
         userList.add(user);
         super.add(user);
+    }
+
+    @Override
+    public void clear() {
+        super.clear();
+        userList.clear();
+    }
+
+    @Override
+    public void addAll(Collection<? extends User> collection) {
+        super.addAll(collection);
+        userList.addAll(collection);
     }
 
     public UserListAdapter(Context context, int textViewResourceId) {

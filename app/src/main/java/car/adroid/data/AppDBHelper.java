@@ -1,10 +1,8 @@
 package car.adroid.data;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
 
 /**
  * Created by jjh on 2016-11-24.
@@ -60,7 +58,7 @@ public class AppDBHelper extends SQLiteOpenHelper {
 //        }
 
         String[] strSqls = {
-                "CREATE TABLE CHAT(IDX INTEGER , CHAT_FLAG INTEGER, USER_NO INTEGER , NICKNAME TEXT , TEAM INTEGER , WR_TIME TEXT , TEXT TEXT , PRIMARY KEY(IDX , CHAT_FLAG));"
+                "CREATE TABLE CHAT(IDX INTEGER , CHAT_FLAG INTEGER, TEAM INTEGER , USER_NO INTEGER , NICKNAME TEXT , WR_TIME TEXT , TEXT TEXT , PRIMARY KEY(IDX , CHAT_FLAG));"
                 ,"CREATE TABLE USER(USER_NO INTEGER , NICKNAME TEXT , TEAM INTEGER , READY_STATUS INTEGER , STATE INTEGER , LATITUDE REAL , LONGITUDE REAL , TEAM_SELECT_TIME TEXT , LAST_ACCESS TEXT , PRIMARY KEY(USER_NO));"
                 ,"CREATE TABLE LOCAL_INFO(ROOM_ID INTEGER , USER_NO INTEGER , NICKNAME INTEGER , TEAM INTEGER , READY_STATUS INTEGER , STATE INTEGER , LATITUDE REAL , LONGITUDE REAL);"
                 ,"INSERT INTO LOCAL_INFO(ROOM_ID) VALUES(0);"
@@ -75,26 +73,6 @@ public class AppDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
-
-
-    public void updateAppData()
-    {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String selectQuery = "SELECT lastchapter FROM Bookdetails WHERE bookpath=? ";
-        String tmp;
-        Cursor c = db.rawQuery(selectQuery, new String[] { "param" });
-
-        if (c.moveToFirst()) {
-            tmp = c.getString(0);
-        }
-        c.close();
-
-        SQLiteStatement stmt = db.compileStatement("SELECT * FROM Country WHERE code = ?");
-        stmt.bindString(1, "US");
-        stmt.execute();
-    }
-
-
 
 //    public static class Table{
 //        public final String TableName;

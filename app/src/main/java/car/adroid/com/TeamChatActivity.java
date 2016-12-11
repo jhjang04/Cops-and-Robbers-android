@@ -1,6 +1,9 @@
 package car.adroid.com;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.DataSetObserver;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -13,12 +16,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import car.adroid.config.AppConfig;
+import car.adroid.service.TeamSelectHttpService;
 import car.adroid.util.ChatArrayAdapter;
 import car.adroid.util.ChatMessage;
+import car.adroid.util.ProgressThread;
 
 public class TeamChatActivity extends FragmentActivity {
 
     private static final String TAG = "ChatActivity";
+
+    Context mContext = this;
 
     private ChatArrayAdapter chatArrayAdapter;
 
@@ -26,6 +34,8 @@ public class TeamChatActivity extends FragmentActivity {
     private ListView listView;
     private EditText chatText;
     private Button buttonSend;
+    private BroadcastReceiver mReceiver;
+
 
     Intent intent;
     private boolean side = false;
@@ -62,7 +72,39 @@ public class TeamChatActivity extends FragmentActivity {
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.activity_chat_singlemessage);
         listView.setAdapter(chatArrayAdapter);
+
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(AppConfig.BROADCAST_ACTION_IN_GAME)) {
+                    String result = intent.getStringExtra("result");
+                    if(result.equals("ING")){
+
+                    }
+                    else if(result.equals("WIN")) {
+//                        startActivity(new Intent(mContext, GameActivity.class));
+                        stopService(new Intent(mContext , TeamSelectHttpService.class));
+                        finish();
+                    }
+                    else if(result.equals("LOSE")){
+                        stopService(new Intent(mContext , TeamSelectHttpService.class));
+                        finish();
+                    }
+                }
+            }
+        };
     }
+
+
+    private void sendChat(){
+        new ProgressThread(mContext){
+            @Override
+            public void run() {
+
+            }
+        }.start();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,5 +162,19 @@ public class TeamChatActivity extends FragmentActivity {
         }
 
         return false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(AppConfig.BROADCAST_ACTION_TEAM_SELECT);
+        registerReceiver(mReceiver, filter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mReceiver);
     }
 }

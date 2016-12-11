@@ -81,9 +81,6 @@ public class HttpConnector implements ConnectorInterface {
 
 
         JSONObject json = HttpConnector.SimpleRequest("makeRoom", mapParam);
-//            String strRst = json.getString("result");
-//            int iRoomNo = json.getInt("room_no");
-//            int iUserNo = json.getInt("user_no");
         return json;
 
     }
@@ -94,15 +91,10 @@ public class HttpConnector implements ConnectorInterface {
         mapParam.put("room_id" , roomId );
         mapParam.put("pwd" , pwd );
         mapParam.put("nickname" , nickname);
-        try {
-            JSONObject json = HttpConnector.SimpleRequest("makeRoom" , mapParam);
+        JSONObject json = HttpConnector.SimpleRequest("joinRoom" , mapParam);
 //            String strRst = json.getString("result");
 //            int iRoomNo = json.getInt("room_no");
-            return json;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return json;
     }
 
 
@@ -116,30 +108,42 @@ public class HttpConnector implements ConnectorInterface {
 
 
         JSONObject json = HttpConnector.SimpleRequest("selectTeam", mapParam);
-//            String strRst = json.getString("result");
-//            int iRoomNo = json.getInt("room_no");
+
         return json;
 
     }
 
     @Override
-    public JSONObject inGame(int roomNo, int userNo, int team,  double latitude, double longitude, int state, int lastChatIdx, int lastTeamChatIdx) throws Exception {
+    public JSONObject inGame(int roomId, int userNo, int team,  double latitude, double longitude, int state, int lastChatIdx, int lastTeamChatIdx) throws Exception {
         Map<String, Object> mapParam = new HashMap<String, Object>();
-        mapParam.put("room_id", roomNo);
+        mapParam.put("room_id", roomId);
         mapParam.put("user_no", userNo);
         mapParam.put("team", team);
-        mapParam.put("latitude", latitude);
-        mapParam.put("longitude", longitude);
+        mapParam.put("latitude", new Double(latitude));
+        mapParam.put("longitude", new Double(longitude));
         mapParam.put("state", state);
         mapParam.put("lastChatIdx", lastChatIdx);
         mapParam.put("lastTeamChatIdx", lastTeamChatIdx);
 
 
         JSONObject json = HttpConnector.SimpleRequest("playing", mapParam);
-//            String strRst = json.getString("result");
-//            int iRoomNo = json.getInt("room_no");
         return json;
 
+    }
+
+    @Override
+    public JSONObject sendChat(int room_id, int team, int chat_flag, int user_no, String nickname, String text, int lastChatIdx, int lastTeamChatIdx) throws Exception {
+        Map<String, Object> mapParam = new HashMap<String, Object>();
+        mapParam.put("room_id", room_id);
+        mapParam.put("team", team);
+        mapParam.put("chat_flag", chat_flag);
+        mapParam.put("user_no", user_no);
+        mapParam.put("nickname", nickname);
+        mapParam.put("text", text);
+        mapParam.put("lastChatIdx", lastChatIdx);
+        mapParam.put("lastTeamChatIdx", lastTeamChatIdx);
+        JSONObject json = HttpConnector.SimpleRequest("sendChat", mapParam);
+        return json;
     }
 
 

@@ -13,10 +13,13 @@ import car.adroid.util.DateUtil;
 public class User {
     public static final int TEAM_COP = 1;
     public static final int TEAM_ROBBER = 2;
+
     public static final int STATE_ALIVE = 1;
     public static final int STATE_CATCHED= 2;
+
     public static final int READY_STATUS_READY = 1;
     public static final int READY_STATUS_NOT_READY = 2;
+
 
     private int mUserNo = 0;
     private String mNickName = "";

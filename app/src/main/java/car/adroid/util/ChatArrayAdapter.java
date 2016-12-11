@@ -12,10 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import car.adroid.com.R;
-import car.adroid.util.ChatMessage;
 
 /**
  * Created by mbj94 on 2016-12-02.
@@ -29,9 +29,20 @@ public class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
 
     @Override
     public void add(ChatMessage object) {
-
         chatMessageList.add(object);
         super.add(object);
+    }
+
+    @Override
+    public void addAll(Collection<? extends ChatMessage> collection) {
+        super.addAll(collection);
+        chatMessageList.addAll(collection);
+    }
+
+    @Override
+    public void clear() {
+        super.clear();
+        chatMessageList.clear();
     }
 
     public ChatArrayAdapter(Context context, int textViewResourceId) {
@@ -59,8 +70,8 @@ public class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
 
         senderText.setText(chatMessageObj.getSender());
         chatText.setText(chatMessageObj.getMessage());
-        chatText.setBackgroundResource(chatMessageObj.IsLeft() ? R.drawable.bubble_b : R.drawable.bubble_a);
-        singleMessageContainer.setGravity(chatMessageObj.IsLeft() ? Gravity.LEFT : Gravity.RIGHT);
+        chatText.setBackgroundResource(chatMessageObj.isLeft() ? R.drawable.bubble_b : R.drawable.bubble_a);
+        singleMessageContainer.setGravity(chatMessageObj.isLeft() ? Gravity.LEFT : Gravity.RIGHT);
         return row;
     }
 

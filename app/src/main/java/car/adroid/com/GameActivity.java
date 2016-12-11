@@ -1,6 +1,9 @@
 package car.adroid.com;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
@@ -25,14 +28,21 @@ import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
 import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 
+import java.util.ArrayList;
+
 import car.adroid.NMap.NMapPOIflagType;
 import car.adroid.NMap.NMapViewerResourceProvider;
 import car.adroid.config.AppConfig;
+import car.adroid.data.AppData;
 import car.adroid.data.User;
+import car.adroid.service.InGameHttpService;
+import car.adroid.service.TeamSelectHttpService;
+import car.adroid.util.SimpleLogger;
 import car.adroid.util.UserListAdapter;
 
 public class GameActivity extends NMapActivity implements NMapView.OnMapStateChangeListener, NMapView.OnMapViewTouchEventListener {
 
+    private Context mContext = this;
     private Button btnTeamChat, btnGlobalChat, btnUserlist;
     private TextView tvTime;
 
@@ -42,7 +52,6 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
 
     private UserListAdapter userListAdapter ;
-    private User[] users = new User[2];
     private ListView lvUsrList;
 
 
@@ -54,21 +63,24 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
     //오버레이 객체 관리 클래스
     private NMapOverlayManager mOverlayManager;
     //POI 아이템 선택 상태 변경 시 호출퇴는 콜백 인터페이스
-    private NMapPOIdataOverlay.OnStateChangeListener onPOIdataStateChangeListener;
+//    private NMapPOIdataOverlay.OnStateChangeListener onPOIdataStateChangeListener;
 
     private NMapMyLocationOverlay mMyLocationOverlay; //지도 위에 현재 위치를 표시하는 오버레이 클래스
     private NMapLocationManager mMapLocationManager; //단말기의 현재 위치 탐색 기능 사용 클래스
     private NMapCompassManager mMapCompassManager; //단말기의 나침반 기능 사용 클래스
 
-
+    private BroadcastReceiver mReceiver;
 
 
     @Override
-        public void onMapInitHandler(NMapView mapView, NMapError errorInfo) {
+    public void onMapInitHandler(NMapView mapView, NMapError errorInfo) {
         if (errorInfo == null) {
-            mMapController.setMapCenter(new NGeoPoint(126.978371, 37.566691), 11);
+//            AppData data = AppData.getInstance(getApplication());
+
+//            mMapController.setMapCenter(new NGeoPoint(data.getLongitude(), data.getLatitude()), 11);
         } else {
-            android.util.Log.e("NMAP", "onMapInitHandler: error=" + errorInfo.toString());
+            SimpleLogger.debug(mContext , "onMapInitHandler: error=" + errorInfo.toString());
+//            android.util.Log.e("NMAP", "onMapInitHandler: error=" + errorInfo.toString());
         }
     }
 
@@ -130,13 +142,46 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         poiData.beginPOIdata(2); // POI 아이템 추가 시작
         poiData.addPOIitem(127.081667, 37.242222, "marker1", markerAlly, 0);
         poiData.addPOIitem(127.081867, 37.242322, "marker2", markerOpponent, 0);
+
         poiData.endPOIdata(); // POI 아이템 추가 종료
         //POI data overlay 객체 생성(여러 개의 오버레이 아이템을 포함할 수 있는 오버레이 클래스)
         NMapPOIdataOverlay poiDataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
-        poiDataOverlay.showAllPOIdata(0); //모든 POI 데이터를 화면에 표시(zomLevel)
+//        poiDataOverlay.showAllPOIdata(0); //모든 POI 데이터를 화면에 표시(zomLevel)
         //POI 아이템이 선택 상태 변경 시 호출되는 콜백 인터페이스 설정
-        poiDataOverlay.setOnStateChangeListener(onPOIdataStateChangeListener);
+//        poiDataOverlay.setOnStateChangeListener(onPOIdataStateChangeListener);
     }
+
+    private void drawMakers(){
+        int markerAlly = NMapPOIflagType.ALLY; //마커 id설정
+        int markerOpponent = NMapPOIflagType.OPPONENT;
+        // POI 아이템 관리 클래스 생성(전체 아이템 수, NMapResourceProvider 상속 클래스)
+
+        AppData data = AppData.getInstance(getApplicationContext());
+        ArrayList<User> cops = data.getCops();
+        ArrayList<User> robbers = data.getRobbers();
+        NMapPOIdata poiData = new NMapPOIdata(cops.size() + robbers.size(), mMapViewerResourceProvider);
+        poiData.removeAllPOIdata();
+        poiData.beginPOIdata(cops.size() + robbers.size()); // POI 아이템 추가 시작
+        for(int i=0 ; i<cops.size() ; i++){
+            User user = cops.get(i);
+            poiData.addPOIitem(user.getLongitude(), user.getLatitude(), "marker1", markerAlly, 0);
+        }
+        for(int i=0 ; i<robbers.size() ; i++){
+            User user = robbers.get(i);
+            poiData.addPOIitem(user.getLongitude(), user.getLatitude() , "marker2", markerOpponent, 0);
+        }
+
+        poiData.endPOIdata(); // POI 아이템 추가 종료
+        //POI data overlay 객체 생성(여러 개의 오버레이 아이템을 포함할 수 있는 오버레이 클래스)
+        NMapPOIdataOverlay poiDataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
+
+
+//        poiDataOverlay.showAllPOIdata(0); //모든 POI 데이터를 화면에 표시(zomLevel)
+        //POI 아이템이 선택 상태 변경 시 호출되는 콜백 인터페이스 설정
+//        poiDataOverlay.setOnStateChangeListener(onPOIdataStateChangeListener);
+    }
+
+
 
     private final NMapLocationManager.OnLocationChangeListener onMyLocationChangeListener =
             new NMapLocationManager.OnLocationChangeListener() { //위치 변경 콜백 인터페이스 정의
@@ -164,6 +209,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
             if (!mMapView.isAutoRotateEnabled()) { //지도 회전기능 활성화 상태 여부 확인
                 mMyLocationOverlay.setCompassHeadingVisible(true); //나침반 각도 표시
                 mMapCompassManager.enableCompass(); //나침반 모니터링 시작
+//                mMapView.setAutoRotateEnabled(true, false); //지도 회전기능 활성화
                 mMapView.setAutoRotateEnabled(true, false); //지도 회전기능 활성화
             }
             mMapView.invalidate();
@@ -208,6 +254,53 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
         // 왼->오른쪽 스와이프로 사이드 바 여는 모드 잠금
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+
+        btnTeamChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GameActivity.this, TeamChatActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnGlobalChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GameActivity.this, GlobalChatActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnUserlist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // show all players on the map
+                mDrawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
+
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(AppConfig.BROADCAST_ACTION_IN_GAME)) {
+                    String result = intent.getStringExtra("result");
+                    ShowMarkersOnMap();
+                    if(result.equals("ING")){
+
+                    }
+                    else if(result.equals("WIN")) {
+//                        startActivity(new Intent(mContext, GameActivity.class));
+                        stopService(new Intent(mContext , TeamSelectHttpService.class));
+                        finish();
+                    }
+                    else if(result.equals("LOSE")){
+                        stopService(new Intent(mContext , TeamSelectHttpService.class));
+                        finish();
+                    }
+                }
+            }
+        };
     }
 
     // 유저 리스트에 유저 추가
@@ -236,7 +329,8 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         // 마커 생성
         mMapViewerResourceProvider = new NMapViewerResourceProvider(this);
         mOverlayManager = new NMapOverlayManager(this, mMapView, mMapViewerResourceProvider);
-        testOverlayMaker();
+//        testOverlayMaker();
+        drawMakers();
     }
 
     private void ShowMyCurrentLocation(){
@@ -262,31 +356,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         ShowNMap();
         ShowMarkersOnMap();
         ShowMyCurrentLocation();
-
-        btnTeamChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(GameActivity.this, TeamChatActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        btnGlobalChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(GameActivity.this, GlobalChatActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        btnUserlist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // show all players on the map
-                mDrawerLayout.openDrawer(Gravity.LEFT);
-            }
-        });
-
+        startService(new Intent(mContext , InGameHttpService.class));
     }
     @Override
     public void onBackPressed() {
@@ -298,4 +368,16 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(AppConfig.BROADCAST_ACTION_IN_GAME);
+        registerReceiver(mReceiver, filter);
+    }
+
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mReceiver);
+    }
 }

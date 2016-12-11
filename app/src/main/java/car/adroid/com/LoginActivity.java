@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import car.adroid.conn.HttpConnector;
 import car.adroid.data.AppData;
+import car.adroid.service.LocationService;
 import car.adroid.util.ProgressThread;
 import car.adroid.util.SimpleLogger;
 
@@ -63,7 +64,9 @@ public class LoginActivity extends FragmentActivity {
                             team = response.getInt("team");
                         }
                     }
-                    appData.updateGameBaseInfo( room_id, user_no, userName , team);
+                    if(result.equals("PASS")) {
+                        appData.updateGameBaseInfo(room_id, user_no, userName, team);
+                    }
                 } catch (Exception e) {
                     SimpleLogger.info(LoginActivity.this, e.toString());
                     result = "ERROR";
@@ -91,7 +94,10 @@ public class LoginActivity extends FragmentActivity {
                     String result = msg.getData().getString("result");
                     if("PASS".equals(result)){
                         Intent intent = new Intent(mContext , TeamActivity.class);
+                        intent.putExtra("room_id" , roomNum);
+                        intent.putExtra("pwd" , roomPwd);
                         startActivity(intent);
+                        startService(new Intent( mContext , LocationService.class));
                     }
                     else if("FAIL".equals(result)){
                         Toast.makeText(mContext , "not exists room info" , Toast.LENGTH_LONG).show();

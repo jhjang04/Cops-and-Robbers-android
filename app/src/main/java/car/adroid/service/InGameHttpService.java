@@ -3,18 +3,19 @@ package car.adroid.service;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import car.adroid.config.AppConfig;
 import car.adroid.conn.HttpConnector;
+import car.adroid.data.AppDBHelper;
 import car.adroid.data.AppData;
+import car.adroid.data.User;
 import car.adroid.util.SimpleLogger;
 
 public class InGameHttpService extends Service {
@@ -45,21 +46,59 @@ public class InGameHttpService extends Service {
                     public void run() {
                         super.run();
                         AppData data = AppData.getInstance(getApplicationContext());
-
-                        Map params = new HashMap<>();
-                        params.put("room_id",data.getRoomId());
-                        params.put("user_no",data.getUserNo());
-                        params.put("latitude",data.getLatitude());
-                        params.put("longitude",data.getLongitude());
-                        params.put("state",data.getState());
-                        params.put("lastChatIdx",data.getLastChatIdx());
-                        params.put("lastTeamChatIdx",data.getLastTeamChatIdx());
+                        String result = "";
                         try {
-                            JSONObject rst = HttpConnector.SimpleRequest("playing",params);
+                            JSONObject response = new HttpConnector().inGame(data.getRoomId() , data.getUserNo() , data.getTeam() , data.getLatitude()
+                                    , data.getLongitude() , data.getState() , data.getLastChatIdx() , data.getLastTeamChatIdx());
+                            result = response.getString("result");
+
+                            JSONArray userList  = response.getJSONArray("userList");
+                            JSONArray chatList = response.getJSONArray("chatList");
+                            JSONArray teamChatList = response.getJSONArray("teamChatList");
+                            int lastChatIdx = response.getInt("lastChatIdx");
+                            int lastTeamChatIdx = response.getInt("lastTeamChatIdx");
+
+                            data.setLastChatIdx(lastChatIdx);
+                            data.setLastTeamChatIdx(lastTeamChatIdx);
+
+                            SQLiteDatabase db = new AppDBHelper(mContext).getWritableDatabase();
+                            User user = new User();
+                            for(int i=0 ; i<userList.length() ; i++){
+                                user.getUserInfoAtJsonObject(userList.getJSONObject(i));
+                                data.aplyUser(db , user);
+                            }
+
+                            for(int i=0 ; i<chatList.length() ; i++){
+                                JSONObject chatObj = chatList.getJSONObject(i);
+                                data.insertChatData(db
+                                        , chatObj.getInt("idx")
+                                        , chatObj.getInt("chat_flag")
+                                        , chatObj.getInt("team")
+                                        , chatObj.getInt("user_no")
+                                        , chatObj.getString("nickname")
+                                        , chatObj.getString("wr_time")
+                                        , chatObj.getString("text"));
+                            }
+
+                            for(int i=0 ; i<teamChatList.length() ; i++){
+                                JSONObject chatObj = teamChatList.getJSONObject(i);
+                                data.insertChatData(db
+                                        , chatObj.getInt("idx")
+                                        , chatObj.getInt("chat_flag")
+                                        , chatObj.getInt("team")
+                                        , chatObj.getInt("user_no")
+                                        , chatObj.getString("nickname")
+                                        , chatObj.getString("wr_time")
+                                        , chatObj.getString("text"));
+                            }
+
+                            db.close();
+
                         } catch (Exception e) {
                             SimpleLogger.debug(mContext , e.toString());
                             e.printStackTrace();
                         }
+                        mBroadcast.putExtra("result" , result);
                         sendBroadcast(mBroadcast);
                     }
                 }.start();
