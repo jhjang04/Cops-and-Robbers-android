@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
@@ -341,6 +342,11 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
                     Long remainTime = (start.getTime() + (600L*1000L) - now.getTime())/1000;
                     String text = "" + (remainTime/3600) + ":" + ((remainTime%3600)/60) + ":" + remainTime%60;
                     tvTime.setText(text);
+
+                    data.refreshState();
+                    Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    vibe.vibrate(AppConfig.WARNING_VIBERATE_MILISECONDS);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -403,7 +409,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         ShowMarkersOnMap();
         ShowMyCurrentLocation();
         startService(new Intent(mContext , InGameHttpService.class));
-        startService(new Intent(mContext , InGameLocalService.class));
+//        startService(new Intent(mContext , InGameLocalService.class));
     }
 
     @Override

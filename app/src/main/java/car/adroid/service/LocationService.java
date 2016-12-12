@@ -59,10 +59,10 @@ public class LocationService extends Service {
         }
         mLocMan.requestLocationUpdates(mProvider, AppConfig.LOCATION_RECIVE_MILISECONDS , AppConfig.LOCATION_RECEIVE_DISTANCE , mListener);
 
-        AppData data = AppData.getInstance(getApplicationContext());
+//        AppData data = AppData.getInstance(getApplicationContext());
 
-        Location loc = mLocMan.getLastKnownLocation(mProvider);
-        data.updateLocalLocation(loc.getLatitude() , loc.getLongitude());
+//        Location loc = mLocMan.getLastKnownLocation(mProvider);
+//        data.updateLocalLocation(loc.getLatitude() , loc.getLongitude());
 
         //return START_STICKY;
         return superRtn;
