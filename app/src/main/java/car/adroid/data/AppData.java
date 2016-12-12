@@ -33,6 +33,7 @@ public class AppData {
     private int mTeam = 0;
     private int mReadyStatus = User.READY_STATUS_NOT_READY;
     private int mState = 0;
+    private String mStartTime = "";
 
     private ArrayList<User> mCops = new ArrayList<User>();
     private ArrayList<User> mRobbers = new ArrayList<User>();
@@ -40,6 +41,7 @@ public class AppData {
     private int mLastTeamChatIdx = 0;
 
     private int mWarnigCount = 0;
+    private Date mWarnigStartTime = null;
     private float mSpeed;
     private Map<Integer, Integer> mUserTeamMap = new HashMap<Integer, Integer>();
     private Map<Integer, Integer> mUserIdxMap = new HashMap<Integer, Integer>();
@@ -76,6 +78,14 @@ public class AppData {
         return mState;
     }
 
+    public float getSpeed() {
+        return mSpeed;
+    }
+
+    public void setSpeed(float mSpeed) {
+        this.mSpeed = mSpeed;
+    }
+
     public ArrayList<User> getCops() {
         return mCops;
     }
@@ -106,6 +116,24 @@ public class AppData {
 
     public void setLastTeamChatIdx(int mLastTeamChatIdx) {
         this.mLastTeamChatIdx = mLastTeamChatIdx;
+    }
+
+    public String getStartTime() {
+        return mStartTime;
+    }
+
+    public void updateStartTime(String startTime) {
+
+        mStartTime = startTime;
+
+        AppDBHelper dbHelper = new AppDBHelper(mAppContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        SQLiteStatement stmtLocalInfo = db.compileStatement("UPDATE LOCAL_INFO SET START_TIME = ?");
+        stmtLocalInfo.bindString(1, startTime);
+
+        stmtLocalInfo.executeUpdateDelete();
+        db.close();
+
     }
 
     private AppData(Context appContext) {
@@ -144,7 +172,7 @@ public class AppData {
 
     private void getLocalInfoAtDB(SQLiteDatabase db) {
 
-        String sql = "SELECT ROOM_ID , USER_NO , NICKNAME , TEAM , READY_STATUS , STATE , LATITUDE , LONGITUDE FROM LOCAL_INFO;";
+        String sql = "SELECT ROOM_ID , USER_NO , NICKNAME , TEAM , READY_STATUS , STATE , LATITUDE , LONGITUDE , START_TIME FROM LOCAL_INFO;";
         Cursor c = db.rawQuery(sql, null);
 
         if (c.moveToNext()) {
@@ -156,6 +184,7 @@ public class AppData {
             this.mState = c.getInt(5);
             this.mLatitude = c.getDouble(6);
             this.mLongitude = c.getDouble(7);
+            this.mStartTime = c.getString(8);
         }
         c.close();
     }
@@ -188,26 +217,36 @@ public class AppData {
 
         float[] distance = new float[3];
         int rst = 0;
+        boolean bWarning = false;
         for (int i = 0; i < arrEnemy.size(); i++) {
             User user = arrEnemy.get(i);
             Location.distanceBetween(this.getLatitude(), this.getLongitude(), user.getLatitude(), user.getLongitude(), distance);
             if (distance[0] < AppConfig.DISTANCE_CATCHED
                     && mSpeed < AppConfig.SPEED_CATCHED
                     && mState == User.STATE_ALIVE
-                    && user.getState() == User.STATE_ALIVE) {
-                rst = mWarnigCount + 1;
+                    && user.getState() == User.STATE_ALIVE ) {
+                bWarning = true;
+//                rst = mWarnigCount + 1;
                 break;
             }
         }
+        if(bWarning && mWarnigStartTime == null){
+            mWarnigStartTime = new Date();
+        }
+        else{
+            mWarnigStartTime = null;
+        }
         mWarnigCount = rst;
-        if (mTeam == User.TEAM_ROBBER && mWarnigCount > AppConfig.LIMIT_WARNING_COUNT) {
+        if ( mTeam == User.TEAM_ROBBER
+                && mWarnigStartTime != null
+                && (new Date().getTime() - mWarnigStartTime.getTime()) < AppConfig.CATCHED_MILLISECONDS ) {
             mState = User.STATE_CATCHED;
         }
     }
 
 
     public boolean isViberate() {
-        return mState == User.STATE_ALIVE && mWarnigCount > 0;
+        return mState == User.STATE_ALIVE && mWarnigStartTime != null;
     }
 
     synchronized public void aplyUser(SQLiteDatabase db, User user) {

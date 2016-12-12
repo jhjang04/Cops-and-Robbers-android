@@ -47,11 +47,18 @@ public class TeamSelectHttpService extends Service {
                         public void run() {
                             AppData appData = AppData.getInstance(getApplicationContext());
                             String result = null;
+                            String startTime = null;
                             JSONArray userList = null;
                             try {
                                 JSONObject res = new HttpConnector().selectTeam(appData.getRoomId(), appData.getUserNo(), appData.getTeam(), appData.getReadyStatus());
                                 result = res.getString("result");
                                 userList = res.getJSONArray("userList");
+                                startTime = res.getString("startTime");
+
+                                if(!startTime.equals("")) {
+                                    appData.updateStartTime(startTime);
+                                }
+
                                 User user = new User();
                                 AppDBHelper dbHelper = new AppDBHelper(mContext);
                                 SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -64,6 +71,7 @@ public class TeamSelectHttpService extends Service {
                                 SimpleLogger.debug(mContext, e.toString());
                                 e.printStackTrace();
                             }
+
                             mBroadcast.putExtra("result", result);
                             sendBroadcast(mBroadcast);
                         }

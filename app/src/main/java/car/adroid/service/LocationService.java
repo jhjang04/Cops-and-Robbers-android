@@ -94,6 +94,7 @@ public class LocationService extends Service {
 //            data.setLatitude(location.getLatitude());
 //            data.setLongitude(location.getLongitude());
             data.updateLocalLocation(location.getLatitude() , location.getLongitude());
+            data.setSpeed(location.getSpeed());
             SimpleLogger.debug(mContext , "lat : " + location.getLatitude() + ", lot : " + location.getLongitude() + "speed : " + location.getSpeed());
         }
 

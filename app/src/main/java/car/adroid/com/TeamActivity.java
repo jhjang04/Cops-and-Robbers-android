@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -12,10 +14,14 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.Date;
+
 import car.adroid.config.AppConfig;
 import car.adroid.data.AppData;
 import car.adroid.data.User;
 import car.adroid.service.TeamSelectHttpService;
+import car.adroid.util.DateUtil;
+import car.adroid.util.ProgressThread;
 import car.adroid.util.TeamListAdapter;
 
 public class TeamActivity extends FragmentActivity {
@@ -73,7 +79,9 @@ public class TeamActivity extends FragmentActivity {
                     return;
                 }
 
+                stopService(new Intent(mContext , TeamSelectHttpService.class));
                 appData.updateTeam(User.TEAM_COP);
+                startService(new Intent(mContext , TeamSelectHttpService.class));
                 NotifyChange();
             }
         });
@@ -85,7 +93,9 @@ public class TeamActivity extends FragmentActivity {
                 if(appData.getTeam() == User.TEAM_ROBBER || appData.getReadyStatus() == User.READY_STATUS_READY){
                     return;
                 }
+                stopService(new Intent(mContext , TeamSelectHttpService.class));
                 appData.updateTeam(User.TEAM_ROBBER);
+                startService(new Intent(mContext , TeamSelectHttpService.class));
                 NotifyChange();
             }
         });
@@ -107,9 +117,31 @@ public class TeamActivity extends FragmentActivity {
                         NotifyChange();
                     }
                     if(result.equals("START")) {
-                        startActivity(new Intent(mContext, GameActivity.class));
+                        final Handler handler = new Handler() {
+                            @Override
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+                                startActivity(new Intent(mContext, GameActivity.class));
+                                finish();
+                            }
+                        };
+                        new ProgressThread(mContext){
+                            @Override
+                            public void run() {
+                                try {
+                                    AppData data = AppData.getInstance(getApplicationContext());
+                                    Date startTime = DateUtil.getDate(data.getStartTime());
+                                    Long sleepTime = startTime.getTime() - new Date().getTime();
+                                    if(sleepTime > 0){
+                                        sleep(sleepTime);
+                                    }
+                                    handler.sendEmptyMessage(0);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }.start();
                         stopService(new Intent(mContext , TeamSelectHttpService.class));
-                        finish();
                     }
                 }
             }

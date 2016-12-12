@@ -70,11 +70,6 @@ public class SimpleLogger extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        if(!AppConfig.DEBUG){
-            //stopService(new Intent(mContext , SimpleLogger.class));\
-            stopSelf();
-            return;
-        }
         mHandler = new Handler();
         mRunnable = new Runnable() {
             public void run() {
@@ -89,6 +84,11 @@ public class SimpleLogger extends Service {
             }
         };
         mHandler.post(mRunnable);
+        if(!AppConfig.DEBUG){
+            //stopService(new Intent(mContext , SimpleLogger.class));\
+            stopSelf();
+            return;
+        }
     }
 
 

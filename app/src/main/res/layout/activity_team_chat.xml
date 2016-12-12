@@ -5,17 +5,6 @@
     android:orientation="vertical"
     android:id="@+id/bgTeamChat">
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="80dp"
-        android:dividerHeight="0px"
-        android:divider="#ffffff"
-        android:clickable="false"
-        android:focusable="false"
-        android:listSelector="#00000000"
-        android:id="@+id/lvTeamChat">
-    </ListView>
 
     <RelativeLayout
         android:id="@+id/form"
@@ -35,10 +24,10 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_toLeftOf="@+id/btnTeamChat"
+            android:layout_toStartOf="@+id/btnTeamChat"
             android:background="@drawable/text_border"
             android:imeOptions="actionDone"
             android:paddingBottom="20dp"
-            android:layout_marginEnd="0dp"
             android:textColor="@android:color/black" />
 
         <Button
@@ -46,9 +35,30 @@
             android:layout_height="wrap_content"
             android:text="Send"
             android:id="@+id/btnTeamChat"
-            android:layout_alignBottom="@+id/tvTeamMessage"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true" />
     </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="31dp"
+        android:layout_above="@+id/btnTeamChat"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="80dp"
+            android:dividerHeight="0px"
+            android:divider="#ffffff"
+            android:clickable="false"
+            android:focusable="false"
+            android:listSelector="#00000000"
+            android:id="@+id/lvTeamChat">
+        </ListView>
+    </LinearLayout>
 
 </RelativeLayout>

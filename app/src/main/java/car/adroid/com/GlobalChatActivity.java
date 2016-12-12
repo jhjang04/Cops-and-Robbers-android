@@ -42,6 +42,8 @@ public class GlobalChatActivity extends FragmentActivity {
     private BroadcastReceiver mReceiver = null;
     private Handler mHandler = null;
 
+    private boolean mIsDown = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +74,7 @@ public class GlobalChatActivity extends FragmentActivity {
 //            }
 //        });
 
+
         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.activity_chat_singlemessage);
         chatText.setMovementMethod(null);
         listView.setAdapter(chatArrayAdapter);
@@ -97,6 +100,18 @@ public class GlobalChatActivity extends FragmentActivity {
             @Override
             public void onClick(View arg0) {
                 sendChatMessage();
+            }
+        });
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                mIsDown = false;
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
             }
         });
 
@@ -151,6 +166,7 @@ public class GlobalChatActivity extends FragmentActivity {
     private boolean sendChatMessage(){
         if(!IsEmptyText())
         {
+            mIsDown = true;
             final String text = chatText.getText().toString();
             new ProgressThread(mContext){
                 @Override
@@ -212,7 +228,12 @@ public class GlobalChatActivity extends FragmentActivity {
         AppData data = AppData.getInstance(getApplicationContext());
         ArrayList<ChatMessage> chatList = data.getChatList();
 
-        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_DISABLED);
+
+        if(mIsDown)
+            listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        else{
+            listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_DISABLED);
+        }
         chatArrayAdapter.clear();
         chatArrayAdapter.addAll(chatList);
         chatArrayAdapter.notifyDataSetChanged();

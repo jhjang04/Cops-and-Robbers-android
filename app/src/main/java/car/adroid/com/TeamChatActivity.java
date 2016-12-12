@@ -24,8 +24,6 @@ import car.adroid.util.ProgressThread;
 
 public class TeamChatActivity extends FragmentActivity {
 
-    private static final String TAG = "ChatActivity";
-
     Context mContext = this;
 
     private ChatArrayAdapter chatArrayAdapter;

@@ -10,7 +10,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
+import car.adroid.service.InGameHttpService;
+import car.adroid.service.InGameLocalService;
 import car.adroid.service.LocationService;
+import car.adroid.service.TeamSelectHttpService;
 import car.adroid.util.SimpleLogger;
 
 public class MainActivity extends FragmentActivity {
@@ -24,7 +27,7 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET};
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET , Manifest.permission.VIBRATE};
         ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQ_CODE);
 
 //        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0);
@@ -53,7 +56,8 @@ public class MainActivity extends FragmentActivity {
             case PERMISSION_REQ_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED
                         && grantResults[1] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[3] == PackageManager.PERMISSION_GRANTED) {
                     //해당 권한이 승낙된 경우.
                     mStarted = true;
                     startService(new Intent( mContext , SimpleLogger.class));
@@ -72,9 +76,11 @@ public class MainActivity extends FragmentActivity {
     protected void onRestart() {
         super.onRestart();
         if(mStarted) {
-            SimpleLogger.debug(mContext , "stop service..");
             stopService(new Intent(mContext, SimpleLogger.class));
             stopService(new Intent(mContext, LocationService.class));
+            stopService(new Intent(mContext, InGameLocalService.class));
+            stopService(new Intent(mContext, InGameHttpService.class));
+            stopService(new Intent(mContext, TeamSelectHttpService.class));
             finish();
         }
     }

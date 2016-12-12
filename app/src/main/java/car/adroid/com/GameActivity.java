@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
@@ -29,6 +30,7 @@ import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import car.adroid.NMap.NMapPOIflagType;
 import car.adroid.NMap.NMapViewerResourceProvider;
@@ -36,7 +38,8 @@ import car.adroid.config.AppConfig;
 import car.adroid.data.AppData;
 import car.adroid.data.User;
 import car.adroid.service.InGameHttpService;
-import car.adroid.service.TeamSelectHttpService;
+import car.adroid.service.InGameLocalService;
+import car.adroid.util.DateUtil;
 import car.adroid.util.SimpleLogger;
 import car.adroid.util.UserListAdapter;
 
@@ -56,6 +59,11 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
 
     private DrawerLayout mDrawerLayout;
+    private Date mDate = new Date();
+    private Runnable mRunnable = null;
+    private Handler mHandelr = null;
+
+    private Date mBackButtonPressDate = null;
 
 
     //지도 위 오버레이 객체 드로잉에 필요한 리소스 데이터 제공 클래스
@@ -70,6 +78,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
     private NMapCompassManager mMapCompassManager; //단말기의 나침반 기능 사용 클래스
 
     private BroadcastReceiver mReceiver;
+
 
 
     @Override
@@ -134,22 +143,22 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
     }
 
-    private void testOverlayMaker() { //오버레이 아이템 추가 함수
-        int markerAlly = NMapPOIflagType.ALLY; //마커 id설정
-        int markerOpponent = NMapPOIflagType.OPPONENT;
-        // POI 아이템 관리 클래스 생성(전체 아이템 수, NMapResourceProvider 상속 클래스)
-        NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider);
-        poiData.beginPOIdata(2); // POI 아이템 추가 시작
-        poiData.addPOIitem(127.081667, 37.242222, "marker1", markerAlly, 0);
-        poiData.addPOIitem(127.081867, 37.242322, "marker2", markerOpponent, 0);
-
-        poiData.endPOIdata(); // POI 아이템 추가 종료
-        //POI data overlay 객체 생성(여러 개의 오버레이 아이템을 포함할 수 있는 오버레이 클래스)
-        NMapPOIdataOverlay poiDataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
-//        poiDataOverlay.showAllPOIdata(0); //모든 POI 데이터를 화면에 표시(zomLevel)
-        //POI 아이템이 선택 상태 변경 시 호출되는 콜백 인터페이스 설정
-//        poiDataOverlay.setOnStateChangeListener(onPOIdataStateChangeListener);
-    }
+//    private void testOverlayMaker() { //오버레이 아이템 추가 함수
+//        int markerAlly = NMapPOIflagType.ALLY; //마커 id설정
+//        int markerOpponent = NMapPOIflagType.OPPONENT;
+//        // POI 아이템 관리 클래스 생성(전체 아이템 수, NMapResourceProvider 상속 클래스)
+//        NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider);
+//        poiData.beginPOIdata(2); // POI 아이템 추가 시작
+//        poiData.addPOIitem(127.081667, 37.242222, "marker1", markerAlly, 0);
+//        poiData.addPOIitem(127.081867, 37.242322, "marker2", markerOpponent, 0);
+//
+//        poiData.endPOIdata(); // POI 아이템 추가 종료
+//        //POI data overlay 객체 생성(여러 개의 오버레이 아이템을 포함할 수 있는 오버레이 클래스)
+//        NMapPOIdataOverlay poiDataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
+////        poiDataOverlay.showAllPOIdata(0); //모든 POI 데이터를 화면에 표시(zomLevel)
+//        //POI 아이템이 선택 상태 변경 시 호출되는 콜백 인터페이스 설정
+////        poiDataOverlay.setOnStateChangeListener(onPOIdataStateChangeListener);
+//    }
 
     private void drawMakers(){
         int markerAlly = NMapPOIflagType.ALLY; //마커 id설정
@@ -159,6 +168,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         AppData data = AppData.getInstance(getApplicationContext());
         ArrayList<User> cops = data.getCops();
         ArrayList<User> robbers = data.getRobbers();
+
         NMapPOIdata poiData = new NMapPOIdata(cops.size() + robbers.size(), mMapViewerResourceProvider);
         poiData.removeAllPOIdata();
         poiData.beginPOIdata(cops.size() + robbers.size()); // POI 아이템 추가 시작
@@ -173,7 +183,9 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
         poiData.endPOIdata(); // POI 아이템 추가 종료
         //POI data overlay 객체 생성(여러 개의 오버레이 아이템을 포함할 수 있는 오버레이 클래스)
+        mOverlayManager.clearOverlays();
         NMapPOIdataOverlay poiDataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
+
 
 
 //        poiDataOverlay.showAllPOIdata(0); //모든 POI 데이터를 화면에 표시(zomLevel)
@@ -191,6 +203,12 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
                     if (mMapController != null) {
                         mMapController.animateTo(myLocation); //지도 중심을 현재 위치로 이동
                     }
+//                    mDate = new Date();
+//                    AppData data = AppData.getInstance(getApplicationContext());
+
+
+//                    data.updateLocalLocation(myLocation.getLatitude() , myLocation.getLongitude());
+
                     return true;
                 }
                 //정해진 시간 내에 위치 탐색 실패 시 호출
@@ -284,23 +302,51 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(AppConfig.BROADCAST_ACTION_IN_GAME)) {
+                    AppData data = AppData.getInstance(getApplicationContext());
                     String result = intent.getStringExtra("result");
                     ShowMarkersOnMap();
-                    if(result.equals("ING")){
+                    userListAdapter.clear();
+                    userListAdapter.addAll(data.getCops());
+                    userListAdapter.addAll(data.getRobbers());
+
+                    if(result.equals("ING")) {
 
                     }
                     else if(result.equals("WIN")) {
 //                        startActivity(new Intent(mContext, GameActivity.class));
-                        stopService(new Intent(mContext , TeamSelectHttpService.class));
+                        startActivity(new Intent(mContext , WinActivity.class));
                         finish();
                     }
                     else if(result.equals("LOSE")){
-                        stopService(new Intent(mContext , TeamSelectHttpService.class));
+                        stopService(new Intent(mContext , InGameHttpService.class));
+                        stopService(new Intent(mContext , InGameLocalService.class));
+                        startActivity(new Intent(mContext , LoseActivity.class));
                         finish();
                     }
                 }
             }
         };
+
+        mHandelr = new Handler();
+
+
+        mRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mHandelr.postDelayed(mRunnable , 1000);
+                    AppData data = AppData.getInstance(getApplicationContext());
+                    Date start = DateUtil.getDate(data.getStartTime());
+                    Date now = new Date();
+                    Long remainTime = (start.getTime() + (600L*1000L) - now.getTime())/1000;
+                    String text = "" + (remainTime/3600) + ":" + ((remainTime%3600)/60) + ":" + remainTime%60;
+                    tvTime.setText(text);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        mHandelr.post(mRunnable);
     }
 
     // 유저 리스트에 유저 추가
@@ -357,14 +403,25 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         ShowMarkersOnMap();
         ShowMyCurrentLocation();
         startService(new Intent(mContext , InGameHttpService.class));
+        startService(new Intent(mContext , InGameLocalService.class));
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.game_activity_drawer);
         if (drawer.isDrawerOpen(Gravity.LEFT)) {
             drawer.closeDrawer(Gravity.LEFT);
         } else {
-            super.onBackPressed();
+            Date now = new Date();
+            if(mBackButtonPressDate != null && (now.getTime() - mBackButtonPressDate.getTime()) < 3000 ){
+                stopService(new Intent(mContext , InGameHttpService.class));
+                stopService(new Intent(mContext , InGameLocalService.class));
+                super.onBackPressed();
+            }
+            else{
+                mBackButtonPressDate = new Date();
+                Toast.makeText(mContext , "한번 더 누르면 종료됩니다." , Toast.LENGTH_LONG).show();
+            }
         }
     }
 

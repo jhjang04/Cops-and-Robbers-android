@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
@@ -34,13 +35,18 @@ public class InGameHttpService extends Service {
 
     @Override
     public void onCreate() {
-        mHandler = new Handler();
+        mHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                mHandler.postDelayed(mRunnable , AppConfig.HTTP_REQUEST_REPEAT_INTERVAL);
+            }
+        };
         mBroadcast = new Intent();
         mBroadcast.setAction(AppConfig.BROADCAST_ACTION_IN_GAME);
 
         mRunnable = new Runnable() {
             public void run() {
-                mHandler.postDelayed(mRunnable, AppConfig.HTTP_REQUEST_REPEAT_INTERVAL);
+
                 new Thread(){
                     @Override
                     public void run() {
@@ -67,6 +73,7 @@ public class InGameHttpService extends Service {
                                 user.getUserInfoAtJsonObject(userList.getJSONObject(i));
                                 data.aplyUser(db , user);
                             }
+
 
                             for(int i=0 ; i<chatList.length() ; i++){
                                 JSONObject chatObj = chatList.getJSONObject(i);
@@ -100,17 +107,19 @@ public class InGameHttpService extends Service {
                         }
                         mBroadcast.putExtra("result" , result);
                         sendBroadcast(mBroadcast);
+                        mHandler.sendEmptyMessage(0);
                     }
                 }.start();
             }
         };
-        mHandler.post(mRunnable);
+
     }
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int rtn =  super.onStartCommand(intent, flags, startId);
+        mHandler.post(mRunnable);
         return rtn;
     }
 
