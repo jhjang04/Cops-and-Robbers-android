@@ -39,7 +39,7 @@ public class TeamChatActivity extends FragmentActivity {
     private boolean side = false;
 
     private void InitVariables(){
-        buttonSend = (Button) findViewById(R.id.btnTeamChat);
+        buttonSend = (Button) findViewById(R.id.btnTeamChatSend);
         listView = (ListView) findViewById(R.id.lvTeamChat);
         chatText = (EditText) findViewById(R.id.tvTeamMessage);
 

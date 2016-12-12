@@ -236,7 +236,7 @@ public class AppData {
         else{
             mWarnigStartTime = null;
         }
-        mWarnigCount = rst;
+//        mWarnigCount = rst;
         if ( mTeam == User.TEAM_ROBBER
                 && mWarnigStartTime != null
                 && (new Date().getTime() - mWarnigStartTime.getTime()) < AppConfig.CATCHED_MILLISECONDS ) {

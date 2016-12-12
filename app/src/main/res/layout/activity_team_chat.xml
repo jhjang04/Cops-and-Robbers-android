@@ -6,13 +6,6 @@
     android:id="@+id/bgTeamChat">
 
 
-    <RelativeLayout
-        android:id="@+id/form"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:orientation="vertical" >
 
         <EditText
             android:layout_width="wrap_content"
@@ -23,8 +16,8 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@+id/btnTeamChat"
-            android:layout_toStartOf="@+id/btnTeamChat"
+            android:layout_toLeftOf="@+id/btnTeamChatSend"
+            android:layout_toStartOf="@+id/btnTeamChatSend"
             android:background="@drawable/text_border"
             android:imeOptions="actionDone"
             android:paddingBottom="20dp"
@@ -34,18 +27,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Send"
-            android:id="@+id/btnTeamChat"
+            android:id="@+id/btnTeamChatSend"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true" />
-    </RelativeLayout>
+
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="31dp"
-        android:layout_above="@+id/btnTeamChat"
+        android:layout_above="@+id/btnTeamChatSend"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
         <ListView

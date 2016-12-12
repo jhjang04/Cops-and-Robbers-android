@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -60,7 +61,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
 
     private DrawerLayout mDrawerLayout;
-    private Date mDate = new Date();
+    private Date mDate = null;
     private Runnable mRunnable = null;
     private Handler mHandelr = null;
 
@@ -172,13 +173,19 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
         NMapPOIdata poiData = new NMapPOIdata(cops.size() + robbers.size(), mMapViewerResourceProvider);
         poiData.removeAllPOIdata();
-        poiData.beginPOIdata(cops.size() + robbers.size()); // POI 아이템 추가 시작
+        poiData.beginPOIdata(cops.size() + robbers.size() - 1); // POI 아이템 추가 시작
         for(int i=0 ; i<cops.size() ; i++){
             User user = cops.get(i);
+            if(user.getUserNo() == data.getUserNo()){
+                continue;
+            }
             poiData.addPOIitem(user.getLongitude(), user.getLatitude(), "marker1", markerAlly, 0);
         }
         for(int i=0 ; i<robbers.size() ; i++){
             User user = robbers.get(i);
+            if(user.getUserNo() == data.getUserNo()){
+                continue;
+            }
             poiData.addPOIitem(user.getLongitude(), user.getLatitude() , "marker2", markerOpponent, 0);
         }
 
@@ -204,11 +211,20 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
                     if (mMapController != null) {
                         mMapController.animateTo(myLocation); //지도 중심을 현재 위치로 이동
                     }
-//                    mDate = new Date();
-//                    AppData data = AppData.getInstance(getApplicationContext());
+                    Date now = new Date();
+                    mDate = new Date();
+                    AppData data = AppData.getInstance(getApplicationContext());
 
+                    if(mDate != null){
+                        float[] moveDistance = new float[3];
+                        Long moveSeconds = (now.getTime() - mDate.getTime())/1000;
+                        Location.distanceBetween(data.getLatitude() , data.getLongitude() , myLocation.getLatitude() , myLocation.getLongitude(), moveDistance);
+                        float speed = moveDistance[0]/moveSeconds;
+                        data.setSpeed(speed);
+                    }
 
-//                    data.updateLocalLocation(myLocation.getLatitude() , myLocation.getLongitude());
+                    data.updateLocalLocation(myLocation.getLatitude() , myLocation.getLongitude());
+
 
                     return true;
                 }
@@ -344,8 +360,10 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
                     tvTime.setText(text);
 
                     data.refreshState();
-                    Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                    vibe.vibrate(AppConfig.WARNING_VIBERATE_MILISECONDS);
+                    if(data.isViberate()) {
+                        Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        vibe.vibrate(AppConfig.WARNING_VIBERATE_MILISECONDS);
+                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -442,5 +460,12 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mHandelr.removeCallbacks(mRunnable);
+        super.onDestroy();
+
     }
 }

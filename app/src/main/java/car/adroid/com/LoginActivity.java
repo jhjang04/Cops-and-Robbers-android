@@ -19,7 +19,6 @@ import org.json.JSONObject;
 
 import car.adroid.conn.HttpConnector;
 import car.adroid.data.AppData;
-import car.adroid.service.LocationService;
 import car.adroid.util.ProgressThread;
 import car.adroid.util.SimpleLogger;
 
@@ -97,7 +96,7 @@ public class LoginActivity extends FragmentActivity {
                         intent.putExtra("room_id" , roomNum);
                         intent.putExtra("pwd" , roomPwd);
                         startActivity(intent);
-                        startService(new Intent( mContext , LocationService.class));
+//                        startService(new Intent( mContext , LocationService.class));
                     }
                     else if("FAIL".equals(result)){
                         Toast.makeText(mContext , "not exists room info" , Toast.LENGTH_LONG).show();
