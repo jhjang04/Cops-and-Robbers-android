@@ -172,6 +172,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         ArrayList<User> cops = data.getCops();
         ArrayList<User> robbers = data.getRobbers();
 
+        int markerDead = NMapPOIflagType.DEAD;
         int markerPrison = NMapPOIflagType.PRISON;
         int markerAlly = data.getTeam() == User.TEAM_COP ? NMapPOIflagType.ALLY : NMapPOIflagType.OPPONENT; //마커 id설정
         int markerOpponent = data.getTeam() == User.TEAM_ROBBER ? NMapPOIflagType.ALLY : NMapPOIflagType.OPPONENT; //마커 id설정
@@ -202,6 +203,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         ///////////// test///////
 //        poiData.addPOIitem(127.081667, 37.242222, "", markerPrison, 0);
         poiData.addPOIitem(AppConfig.PRISON_LONGITUDE, AppConfig.PRISON_LATITUDE , "", markerPrison, 0);
+//        poiData.addPOIitem(127.081667, 37.242222, "", markerDead, 0);
         //////////////////////
 
         for (int i = 0; i < allys.size(); i++) {
