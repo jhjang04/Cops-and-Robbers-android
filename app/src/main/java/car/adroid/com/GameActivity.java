@@ -164,49 +164,64 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 ////        poiDataOverlay.setOnStateChangeListener(onPOIdataStateChangeListener);
 //    }
 
-    private void drawMakers(){
-        int markerAlly = NMapPOIflagType.ALLY; //마커 id설정
-        int markerOpponent = NMapPOIflagType.OPPONENT;
+    private void drawMakers() {
+//        int markerAlly = NMapPOIflagType.ALLY; //마커 id설정
+//        int markerOpponent = NMapPOIflagType.OPPONENT;
         // POI 아이템 관리 클래스 생성(전체 아이템 수, NMapResourceProvider 상속 클래스)
 
         AppData data = AppData.getInstance(getApplicationContext());
         ArrayList<User> cops = data.getCops();
         ArrayList<User> robbers = data.getRobbers();
 
-
+        int markerPrison = NMapPOIflagType.PRISON;
         int markerAlly = data.getTeam() == User.TEAM_COP ? NMapPOIflagType.ALLY : NMapPOIflagType.OPPONENT; //마커 id설정
         int markerOpponent = data.getTeam() == User.TEAM_ROBBER ? NMapPOIflagType.ALLY : NMapPOIflagType.OPPONENT; //마커 id설정
 
+        ArrayList<User> allys = data.getAllys(data.getTeam());
+        ArrayList<User> enemys = data.getEnemys(data.getTeam());
+        ArrayList<User> targetEnemys = null;
+
+        if(data.getTeam() == User.TEAM_COP) {
+            targetEnemys = new ArrayList<User>();
+            for (int i = 0; i < cops.size(); i++) {
+                User user = cops.get(i);
+                float distance = data.getDistanceWithMe(user.getLatitude() , user.getLongitude());
+                if(distance < AppConfig.DISTANCE_SHOW_MIN || distance > AppConfig.DISTANCE_SHOW_MAX) {
+                    targetEnemys.add(user);
+                }
+            }
+        }
+        else{
+            targetEnemys = enemys;
+        }
+
+
         NMapPOIdata poiData = new NMapPOIdata(allys.size() + targetEnemys.size(), mMapViewerResourceProvider);
         poiData.removeAllPOIdata();
-        poiData.beginPOIdata(cops.size() + robbers.size() - 1); // POI 아이템 추가 시작
+        poiData.beginPOIdata(enemys.size() + targetEnemys.size()); // POI 아이템 추가 시작
 
         ///////////// test///////
         poiData.addPOIitem(127.081667, 37.242222, "", markerPrison, 0);
         //////////////////////
 
-
-        for(int i=0 ; i<cops.size() ; i++){
-            User user = cops.get(i);
-            if(user.getUserNo() == data.getUserNo()){
-        poiData.beginPOIdata(allys.size() + targetEnemys.size() - 1); // POI 아이템 추가 시작
-        for(int i=0 ; i<allys.size() ; i++) {
+        for (int i = 0; i < allys.size(); i++) {
             User user = allys.get(i);
-            if(user.getUserNo() == data.getUserNo()) {
+            if (user.getUserNo() == data.getUserNo()) {
                 continue;
             }
             poiData.addPOIitem(user.getLongitude(), user.getLatitude(), "", markerAlly, 0);
         }
-        for(int i=0 ; i<targetEnemys.size() ; i++){
+
+
+        for (int i = 0; i < targetEnemys.size(); i++) {
             User user = targetEnemys.get(i);
-            poiData.addPOIitem(user.getLongitude(), user.getLatitude() , "" , markerOpponent, 0);
+            poiData.addPOIitem(user.getLongitude(), user.getLatitude(), "", markerOpponent, 0);
         }
 
         poiData.endPOIdata(); // POI 아이템 추가 종료
         //POI data overlay 객체 생성(여러 개의 오버레이 아이템을 포함할 수 있는 오버레이 클래스)
         mOverlayManager.clearOverlays();
         NMapPOIdataOverlay poiDataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
-
 
 
 //        poiDataOverlay.showAllPOIdata(0); //모든 POI 데이터를 화면에 표시(zomLevel)
@@ -369,7 +384,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
                     Date start = DateUtil.getDate(data.getStartTime());
                     Date now = new Date();
                     Long remainTime = (start.getTime() + (600L*1000L) - now.getTime())/1000;
-                    String text = "" + (remainTime/3600) + ":" + ((remainTime%3600)/60) + ":" + remainTime%60;
+                    String text = String.format("%d:%02d:%02d" , remainTime/3600 , (remainTime%3600)/60 , remainTime%60);
                     tvTime.setText(text);
 
                     data.refreshState();
