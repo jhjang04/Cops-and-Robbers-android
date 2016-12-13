@@ -11,7 +11,7 @@
     tools:context="car.adroid.com.LoseActivity">
 
     <TextView
-        android:text="You Lose..."
+        android:text="You Lost..."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView2"
