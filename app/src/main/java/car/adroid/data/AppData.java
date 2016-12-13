@@ -447,7 +447,7 @@ public class AppData {
             String wr_time = c.getString(4);
             String text = c.getString(5);
             ChatMessage m = new ChatMessage();
-            m.setIsLeft(team == mTeam);
+            m.setIsLeft(user_no != mUserNo);
             m.setSender(nickname);
             m.setMessage(text);
             arr.add(m);
@@ -470,7 +470,7 @@ public class AppData {
             String wr_time = c.getString(4);
             String text = c.getString(5);
             ChatMessage m = new ChatMessage();
-            m.setIsLeft(user_no == mUserNo);
+            m.setIsLeft(user_no != mUserNo);
             m.setSender(nickname);
             m.setMessage(text);
             arr.add(m);
@@ -478,6 +478,13 @@ public class AppData {
         c.close();
         db.close();
         return arr;
+    }
+
+
+    public float getDistanceWithMe(double lat , double lot){
+        float[] f = new float[3];
+        Location.distanceBetween(mLatitude , mLongitude , lat , lot , f);
+        return f[0];
     }
 }
 

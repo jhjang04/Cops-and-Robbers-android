@@ -60,7 +60,7 @@ public class MainActivity extends FragmentActivity {
                         && grantResults[3] == PackageManager.PERMISSION_GRANTED) {
                     //해당 권한이 승낙된 경우.
                     mStarted = true;
-                    startService(new Intent( mContext , SimpleLogger.class));
+                    startService(new Intent( getApplicationContext() , SimpleLogger.class));
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 } else {
                     //해당 권한이 거절된 경우.
@@ -76,11 +76,11 @@ public class MainActivity extends FragmentActivity {
     protected void onRestart() {
         super.onRestart();
         if(mStarted) {
-            stopService(new Intent(mContext, SimpleLogger.class));
-            stopService(new Intent(mContext, LocationService.class));
-            stopService(new Intent(mContext, InGameLocalService.class));
-            stopService(new Intent(mContext, InGameHttpService.class));
-            stopService(new Intent(mContext, TeamSelectHttpService.class));
+            stopService(new Intent(getApplicationContext(), SimpleLogger.class));
+            stopService(new Intent(getApplicationContext(), LocationService.class));
+            stopService(new Intent(getApplicationContext(), InGameLocalService.class));
+            stopService(new Intent(getApplicationContext(), InGameHttpService.class));
+            stopService(new Intent(getApplicationContext(), TeamSelectHttpService.class));
             finish();
         }
     }

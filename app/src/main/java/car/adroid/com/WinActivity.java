@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 
 import car.adroid.service.InGameHttpService;
-import car.adroid.service.InGameLocalService;
 
 public class WinActivity extends FragmentActivity {
 
@@ -41,8 +40,8 @@ public class WinActivity extends FragmentActivity {
 
     @Override
     protected void onDestroy() {
-        stopService(new Intent(mContext , InGameHttpService.class));
-        stopService(new Intent(mContext , InGameLocalService.class));
+        stopService(new Intent(getApplicationContext() , InGameHttpService.class));
+//        stopService(new Intent(getApplicationContext() , InGameLocalService.class));
         super.onDestroy();
     }
 }

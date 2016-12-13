@@ -167,14 +167,17 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
     private void drawMakers(){
         int markerAlly = NMapPOIflagType.ALLY; //마커 id설정
         int markerOpponent = NMapPOIflagType.OPPONENT;
-        int markerPrison = NMapPOIflagType.PRISON;
         // POI 아이템 관리 클래스 생성(전체 아이템 수, NMapResourceProvider 상속 클래스)
 
         AppData data = AppData.getInstance(getApplicationContext());
         ArrayList<User> cops = data.getCops();
         ArrayList<User> robbers = data.getRobbers();
 
-        NMapPOIdata poiData = new NMapPOIdata(cops.size() + robbers.size(), mMapViewerResourceProvider);
+
+        int markerAlly = data.getTeam() == User.TEAM_COP ? NMapPOIflagType.ALLY : NMapPOIflagType.OPPONENT; //마커 id설정
+        int markerOpponent = data.getTeam() == User.TEAM_ROBBER ? NMapPOIflagType.ALLY : NMapPOIflagType.OPPONENT; //마커 id설정
+
+        NMapPOIdata poiData = new NMapPOIdata(allys.size() + targetEnemys.size(), mMapViewerResourceProvider);
         poiData.removeAllPOIdata();
         poiData.beginPOIdata(cops.size() + robbers.size() - 1); // POI 아이템 추가 시작
 
@@ -186,16 +189,17 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         for(int i=0 ; i<cops.size() ; i++){
             User user = cops.get(i);
             if(user.getUserNo() == data.getUserNo()){
+        poiData.beginPOIdata(allys.size() + targetEnemys.size() - 1); // POI 아이템 추가 시작
+        for(int i=0 ; i<allys.size() ; i++) {
+            User user = allys.get(i);
+            if(user.getUserNo() == data.getUserNo()) {
                 continue;
             }
-            poiData.addPOIitem(user.getLongitude(), user.getLatitude(), "marker1", markerAlly, 0);
+            poiData.addPOIitem(user.getLongitude(), user.getLatitude(), "", markerAlly, 0);
         }
-        for(int i=0 ; i<robbers.size() ; i++){
-            User user = robbers.get(i);
-            if(user.getUserNo() == data.getUserNo()){
-                continue;
-            }
-            poiData.addPOIitem(user.getLongitude(), user.getLatitude() , "marker2", markerOpponent, 0);
+        for(int i=0 ; i<targetEnemys.size() ; i++){
+            User user = targetEnemys.get(i);
+            poiData.addPOIitem(user.getLongitude(), user.getLatitude() , "" , markerOpponent, 0);
         }
 
         poiData.endPOIdata(); // POI 아이템 추가 종료

@@ -79,9 +79,9 @@ public class TeamActivity extends FragmentActivity {
                     return;
                 }
 
-                stopService(new Intent(mContext , TeamSelectHttpService.class));
+                stopService(new Intent(getApplicationContext() , TeamSelectHttpService.class));
                 appData.updateTeam(User.TEAM_COP);
-                startService(new Intent(mContext , TeamSelectHttpService.class));
+                startService(new Intent(getApplicationContext() , TeamSelectHttpService.class));
                 NotifyChange();
             }
         });
@@ -93,9 +93,9 @@ public class TeamActivity extends FragmentActivity {
                 if(appData.getTeam() == User.TEAM_ROBBER || appData.getReadyStatus() == User.READY_STATUS_READY){
                     return;
                 }
-                stopService(new Intent(mContext , TeamSelectHttpService.class));
+                stopService(new Intent(getApplicationContext() , TeamSelectHttpService.class));
                 appData.updateTeam(User.TEAM_ROBBER);
-                startService(new Intent(mContext , TeamSelectHttpService.class));
+                startService(new Intent(getApplicationContext() , TeamSelectHttpService.class));
                 NotifyChange();
             }
         });
@@ -141,7 +141,7 @@ public class TeamActivity extends FragmentActivity {
                                 }
                             }
                         }.start();
-                        stopService(new Intent(mContext , TeamSelectHttpService.class));
+                        stopService(new Intent(getApplicationContext() , TeamSelectHttpService.class));
                     }
                 }
             }
@@ -156,7 +156,7 @@ public class TeamActivity extends FragmentActivity {
         InitVariables();
         InitSettings();
         InitList();
-        startService(new Intent(mContext , TeamSelectHttpService.class));
+        startService(new Intent(getApplicationContext() , TeamSelectHttpService.class));
 
     }
 
