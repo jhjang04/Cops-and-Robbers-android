@@ -43,6 +43,7 @@ public class HttpConnector implements ConnectorInterface {
             Url = new URL(urlBuffer.toString());  // URL화 한다.
             conn = (HttpURLConnection) Url.openConnection(); // URL을 연결한 객체 생성.
             conn.setRequestMethod("GET"); // get방식 통신
+            conn.setRequestProperty("Content-type", "application/x-www-from-urlencoded");
             conn.setRequestProperty("charset", "UTF-8");
             conn.setDoOutput(true);       // 쓰기모드 지정
             conn.setDoInput(true);        // 읽기모드 지정
