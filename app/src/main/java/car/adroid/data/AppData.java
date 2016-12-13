@@ -43,6 +43,9 @@ public class AppData {
     private int mWarnigCount = 0;
     private Date mWarnigStartTime = null;
     private float mSpeed;
+
+    private Date mReviveStartTime = null;
+
     private Map<Integer, Integer> mUserTeamMap = new HashMap<Integer, Integer>();
     private Map<Integer, Integer> mUserIdxMap = new HashMap<Integer, Integer>();
 
@@ -213,6 +216,19 @@ public class AppData {
 
 
     public void refreshState() {
+
+        if(mState == User.STATE_ALIVE){
+            judgeCatched();
+        }
+        else{
+            judgeRevive();
+        }
+
+
+    }
+
+
+    private void judgeCatched(){
         ArrayList<User> arrEnemy = (mTeam == User.TEAM_COP) ? mRobbers : mCops;
 
         float[] distance = new float[3];
@@ -222,18 +238,18 @@ public class AppData {
             User user = arrEnemy.get(i);
             Location.distanceBetween(this.getLatitude(), this.getLongitude(), user.getLatitude(), user.getLongitude(), distance);
             if (distance[0] < AppConfig.DISTANCE_CATCHED
-                    && mSpeed < AppConfig.SPEED_CATCHED
                     && mState == User.STATE_ALIVE
-                    && user.getState() == User.STATE_ALIVE ) {
+                    && user.getState() == User.STATE_ALIVE) {
                 bWarning = true;
 //                rst = mWarnigCount + 1;
                 break;
             }
         }
-        if(bWarning && mWarnigStartTime == null){
+
+        if(bWarning && mWarnigStartTime == null && mSpeed < AppConfig.SPEED_CATCHED){
             mWarnigStartTime = new Date();
         }
-        else if(!bWarning){
+        else if(!bWarning || mSpeed >= AppConfig.SPEED_CATCHED){
             mWarnigStartTime = null;
         }
 //        mWarnigCount = rst;
@@ -244,10 +260,49 @@ public class AppData {
         }
     }
 
+    private void judgeRevive(){
+//        float distanceFromPrison = this.getDistanceWithMe(AppConfig.PRISON_LATITUDE , AppConfig.PRISON_LONGITUDE);
+        Date now = new Date();
+        if(this.isPrisonWarning() ){
+            mReviveStartTime = null;
+            return;
+        }
+        else{
+            ArrayList<User> allys = this.getAllys(this.getTeam());
+            boolean bRevive = false;
+            for(int i=0 ; i<allys.size() ; i++){
+                User user = allys.get(i);
+                if(user.getUserNo() == this.getUserNo()) {
+                    continue;
+                }
+                float[] f = new float[3];
+                Location.distanceBetween(user.getLatitude() , user.getLongitude() , AppConfig.PRISON_LATITUDE , AppConfig.PRISON_LONGITUDE , f);
+                if(f[0] < 30) {
+                    bRevive = true;
+                    break;
+                }
+            }
+            if(bRevive){
+                if(mReviveStartTime == null){
+                    mReviveStartTime = now;
+                }
+                else if(now.getTime() - mReviveStartTime.getTime() >= 5000)  {
+                    mState = User.STATE_ALIVE;
+                }
+            }
+        }
+    }
+
+
 
     public boolean isViberate() {
         return mState == User.STATE_ALIVE && mWarnigStartTime != null;
     }
+    public boolean isToastRevive() {return mReviveStartTime != null; }
+    public boolean isPrisonWarning() {
+        return mState == User.STATE_CATCHED && this.getDistanceWithMe(AppConfig.PRISON_LATITUDE , AppConfig.PRISON_LONGITUDE) < 50;
+    }
+
 
     synchronized public void aplyUser(SQLiteDatabase db, User user) {
         if (mCops == null) mCops = new ArrayList<User>();

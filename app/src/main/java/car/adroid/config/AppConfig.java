@@ -34,6 +34,9 @@ public class AppConfig {
     public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final long LIMIT_ACCESS_MIILISECONDS = 5000;
 
+    public static final double PRISON_LATITUDE = 37.24736496;
+    public static final double PRISON_LONGITUDE = 127.07819944;
+
 
 
 

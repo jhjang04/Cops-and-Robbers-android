@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -183,8 +182,8 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
         if(data.getTeam() == User.TEAM_COP) {
             targetEnemys = new ArrayList<User>();
-            for (int i = 0; i < cops.size(); i++) {
-                User user = cops.get(i);
+            for (int i = 0; i < enemys.size(); i++) {
+                User user = enemys.get(i);
                 float distance = data.getDistanceWithMe(user.getLatitude() , user.getLongitude());
                 if(distance < AppConfig.DISTANCE_SHOW_MIN || distance > AppConfig.DISTANCE_SHOW_MAX) {
                     targetEnemys.add(user);
@@ -201,7 +200,8 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         poiData.beginPOIdata(enemys.size() + targetEnemys.size()); // POI 아이템 추가 시작
 
         ///////////// test///////
-        poiData.addPOIitem(127.081667, 37.242222, "", markerPrison, 0);
+//        poiData.addPOIitem(127.081667, 37.242222, "", markerPrison, 0);
+        poiData.addPOIitem(AppConfig.PRISON_LONGITUDE, AppConfig.PRISON_LATITUDE , "", markerPrison, 0);
         //////////////////////
 
         for (int i = 0; i < allys.size(); i++) {
@@ -243,12 +243,13 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
                     AppData data = AppData.getInstance(getApplicationContext());
 
                     if(mDate != null){
-                        float[] moveDistance = new float[3];
                         Long moveMiliseconds = now.getTime() - mDate.getTime();
-                        Location.distanceBetween(data.getLatitude() , data.getLongitude() , myLocation.getLatitude() , myLocation.getLongitude(), moveDistance);
-                        float speed = moveDistance[0] * 1000 / (float)moveMiliseconds ;
+                        float moveDistance = data.getDistanceWithMe(myLocation.getLatitude() , myLocation.getLongitude());
+                        float speed = moveDistance * 1000 / (float)moveMiliseconds ;
                         data.setSpeed(speed);
+                        SimpleLogger.debug(mContext , "lat : " + myLocation.getLatitude() + "lot : " + myLocation.getLongitude() + "speed : " + speed);
                     }
+
                     mDate = now;
 
                     data.updateLocalLocation(myLocation.getLatitude() , myLocation.getLongitude());
@@ -374,8 +375,8 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
         mHandelr = new Handler();
 
-
         mRunnable = new Runnable() {
+            int reviveSec = 5;
             @Override
             public void run() {
                 try {
@@ -398,6 +399,15 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
                         mCatchShowed = true;
                         startActivity(new Intent(mContext , CatchedActivity.class));
                     }
+
+                    if(data.isPrisonWarning()){
+                        Toast.makeText(mContext , "감옥으로 이동해 주시기 바랍니다." , Toast.LENGTH_SHORT).show();
+                    }
+
+                    if(data.isToastRevive()) {
+                        Toast.makeText(mContext , "곧 탈옥에 성공합니다." , Toast.LENGTH_SHORT).show();
+                    }
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
