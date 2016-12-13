@@ -11,7 +11,8 @@ public class AppConfig {
     public static final int LOGGER_SHOW_DELAY = 5000;
 
     public static final String SERVER_TYPE = "HTTP";
-    public static final String HTTP_URL= "http://163.180.173.169:9999/Cops_and_Robbers";
+//    public static final String HTTP_URL= "http://163.180.173.169:9999/Cops_and_Robbers";
+    public static final String HTTP_URL= "http://ec2-52-78-178-33.ap-northeast-2.compute.amazonaws.com/car";
 //    public static final String HTTP_URL= "http://192.168.0.81/car";
     public static final int HTTP_REQUEST_REPEAT_INTERVAL = 500;
 
@@ -19,7 +20,7 @@ public class AppConfig {
     public static final int LOCATION_RECEIVE_DISTANCE = 10;
 
     public static final int LIMIT_WARNING_COUNT = 5;
-    public static final int CATCHED_MILLISECONDS = 5000;
+    public static final int CATCHED_MILLISECONDS = 15000;
     public static final float SPEED_CATCHED = 2.5f;
     public static final float DISTANCE_CATCHED = 30;
     public static final int WARNING_VIBERATE_MILISECONDS = 500;

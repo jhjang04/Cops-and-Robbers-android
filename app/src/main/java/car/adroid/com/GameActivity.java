@@ -81,6 +81,8 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
 
     private BroadcastReceiver mReceiver;
 
+    private boolean mCatchShowed = false;
+
 
 
     @Override
@@ -212,16 +214,16 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
                         mMapController.animateTo(myLocation); //지도 중심을 현재 위치로 이동
                     }
                     Date now = new Date();
-                    mDate = new Date();
                     AppData data = AppData.getInstance(getApplicationContext());
 
                     if(mDate != null){
                         float[] moveDistance = new float[3];
-                        Long moveSeconds = (now.getTime() - mDate.getTime())/1000;
+                        Long moveMiliseconds = now.getTime() - mDate.getTime();
                         Location.distanceBetween(data.getLatitude() , data.getLongitude() , myLocation.getLatitude() , myLocation.getLongitude(), moveDistance);
-                        float speed = moveDistance[0]/moveSeconds;
+                        float speed = moveDistance[0] * 1000 / (float)moveMiliseconds ;
                         data.setSpeed(speed);
                     }
+                    mDate = now;
 
                     data.updateLocalLocation(myLocation.getLatitude() , myLocation.getLongitude());
 
@@ -363,6 +365,12 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
                     if(data.isViberate()) {
                         Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                         vibe.vibrate(AppConfig.WARNING_VIBERATE_MILISECONDS);
+                        mCatchShowed = false;
+                    }
+
+                    if(data.getState() == User.STATE_CATCHED && !mCatchShowed){
+                        mCatchShowed = true;
+                        startActivity(new Intent(mContext , CatchedActivity.class));
                     }
 
                 } catch (Exception e) {

@@ -32,7 +32,7 @@ public class AppData {
     private double mLongitude = 0;
     private int mTeam = 0;
     private int mReadyStatus = User.READY_STATUS_NOT_READY;
-    private int mState = 0;
+    private int mState = User.STATE_ALIVE;
     private String mStartTime = "";
 
     private ArrayList<User> mCops = new ArrayList<User>();
@@ -233,13 +233,13 @@ public class AppData {
         if(bWarning && mWarnigStartTime == null){
             mWarnigStartTime = new Date();
         }
-        else{
+        else if(!bWarning){
             mWarnigStartTime = null;
         }
 //        mWarnigCount = rst;
         if ( mTeam == User.TEAM_ROBBER
                 && mWarnigStartTime != null
-                && (new Date().getTime() - mWarnigStartTime.getTime()) < AppConfig.CATCHED_MILLISECONDS ) {
+                && (new Date().getTime() - mWarnigStartTime.getTime()) > AppConfig.CATCHED_MILLISECONDS ) {
             mState = User.STATE_CATCHED;
         }
     }
