@@ -188,7 +188,8 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
             for (int i = 0; i < robbers.size(); i++) {
                 User user = robbers.get(i);
                 float distance = data.getDistanceWithMe(user.getLatitude() , user.getLongitude());
-                if( distance <= AppConfig.DISTANCE_SHOW_MIN
+                if( user.getState() == User.STATE_CATCHED
+                        ||distance <= AppConfig.DISTANCE_SHOW_MIN
                         || distance > AppConfig.DISTANCE_SHOW_MAX) {
                     targetRobbers.add(user);
                 }
@@ -223,7 +224,13 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
             if (user.getUserNo() == data.getUserNo()) {
                 continue;
             }
-            poiData.addPOIitem(user.getLongitude(), user.getLatitude(), "", markerOpponent, 0);
+            if(user.getState() == User.STATE_ALIVE){
+                poiData.addPOIitem(user.getLongitude(), user.getLatitude(), "", markerOpponent, 0);
+            }
+            else {
+                poiData.addPOIitem(user.getLongitude(), user.getLatitude(), "", markerDead, 0);
+            }
+
         }
 
         poiData.endPOIdata(); // POI 아이템 추가 종료
@@ -409,11 +416,13 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
                     }
 
                     if(data.isPrisonWarning()){
-                        Toast.makeText(mContext , "감옥으로 이동해 주시기 바랍니다." , Toast.LENGTH_SHORT).show();
+                        if((now.getTime()/1000) % 5 == 0)
+                            Toast.makeText(mContext , "감옥으로 이동해 주시기 바랍니다." , Toast.LENGTH_SHORT).show();
                     }
 
                     if(data.isToastRevive()) {
-                        Toast.makeText(mContext , "곧 탈옥에 성공합니다." , Toast.LENGTH_SHORT).show();
+                        if((now.getTime()/1000) % 3 == 0)
+                            Toast.makeText(mContext , "곧 탈옥에 성공합니다." , Toast.LENGTH_SHORT).show();
                     }
 
 
