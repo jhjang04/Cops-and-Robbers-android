@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -35,14 +36,17 @@ public class HttpConnector implements ConnectorInterface {
                     urlBuffer.append("&")
                             .append(strKeys[i].toString())
                             .append("=")
-                            .append(params.get(strKeys[i].toString()))
+//                            .append(params.get(strKeys[i].toString()))
+                            .append(URLEncoder.encode(params.get(strKeys[i].toString()).toString() , "UTF-8"))
                     ;
                 }
             }
 
-            Url = new URL(urlBuffer.toString());  // URL화 한다.
+            Url = new URL(urlBuffer.toString());
+//            Url = new URL(URLEncoder.encode(urlBuffer.toString() , "UTF-8"));  // URL화 한다.
             conn = (HttpURLConnection) Url.openConnection(); // URL을 연결한 객체 생성.
             conn.setRequestMethod("GET"); // get방식 통신
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestProperty("charset", "UTF-8");
             conn.setDoOutput(true);       // 쓰기모드 지정
             conn.setDoInput(true);        // 읽기모드 지정
