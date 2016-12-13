@@ -176,36 +176,39 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         int markerAlly = data.getTeam() == User.TEAM_COP ? NMapPOIflagType.ALLY : NMapPOIflagType.OPPONENT; //마커 id설정
         int markerOpponent = data.getTeam() == User.TEAM_ROBBER ? NMapPOIflagType.ALLY : NMapPOIflagType.OPPONENT; //마커 id설정
 
-        ArrayList<User> allys = data.getAllys(data.getTeam());
-        ArrayList<User> enemys = data.getEnemys(data.getTeam());
-        ArrayList<User> targetEnemys = null;
+//        ArrayList<User> allys = data.getAllys(data.getTeam());
+//        ArrayList<User> enemys = data.getEnemys(data.getTeam());
+//        ArrayList<User> targetEnemys = null;
+
+        ArrayList<User> targetRobbers = null;
 
         if(data.getTeam() == User.TEAM_COP) {
-            targetEnemys = new ArrayList<User>();
-            for (int i = 0; i < enemys.size(); i++) {
-                User user = enemys.get(i);
+            targetRobbers = new ArrayList<User>();
+            for (int i = 0; i < robbers.size(); i++) {
+                User user = robbers.get(i);
                 float distance = data.getDistanceWithMe(user.getLatitude() , user.getLongitude());
-                if(distance < AppConfig.DISTANCE_SHOW_MIN || distance > AppConfig.DISTANCE_SHOW_MAX) {
-                    targetEnemys.add(user);
+                if( distance <= AppConfig.DISTANCE_SHOW_MIN
+                        || distance > AppConfig.DISTANCE_SHOW_MAX) {
+                    targetRobbers.add(user);
                 }
             }
         }
         else{
-            targetEnemys = enemys;
+            targetRobbers = robbers;
         }
 
 
-        NMapPOIdata poiData = new NMapPOIdata(allys.size() + targetEnemys.size(), mMapViewerResourceProvider);
+        NMapPOIdata poiData = new NMapPOIdata(cops.size() + targetRobbers.size(), mMapViewerResourceProvider);
         poiData.removeAllPOIdata();
-        poiData.beginPOIdata(enemys.size() + targetEnemys.size()); // POI 아이템 추가 시작
+        poiData.beginPOIdata(cops.size() + targetRobbers.size()); // POI 아이템 추가 시작
 
         ///////////// test///////
 //        poiData.addPOIitem(127.081667, 37.242222, "", markerPrison, 0);
         poiData.addPOIitem(AppConfig.PRISON_LONGITUDE, AppConfig.PRISON_LATITUDE , "", markerPrison, 0);
         //////////////////////
 
-        for (int i = 0; i < allys.size(); i++) {
-            User user = allys.get(i);
+        for (int i = 0; i < cops.size(); i++) {
+            User user = cops.get(i);
             if (user.getUserNo() == data.getUserNo()) {
                 continue;
             }
@@ -213,8 +216,11 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         }
 
 
-        for (int i = 0; i < targetEnemys.size(); i++) {
-            User user = targetEnemys.get(i);
+        for (int i = 0; i < targetRobbers.size(); i++) {
+            User user = targetRobbers.get(i);
+            if (user.getUserNo() == data.getUserNo()) {
+                continue;
+            }
             poiData.addPOIitem(user.getLongitude(), user.getLatitude(), "", markerOpponent, 0);
         }
 

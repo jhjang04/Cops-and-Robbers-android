@@ -23,7 +23,7 @@ public class AppConfig {
     public static final int CATCHED_MILLISECONDS = 15000;
     public static final float SPEED_CATCHED = 2.5f;
     public static final float DISTANCE_CATCHED = 30f;
-    public static final float DISTANCE_SHOW_MIN = 50f;
+    public static final float DISTANCE_SHOW_MIN = 100f;
     public static final float DISTANCE_SHOW_MAX = 200f;
     public static final int WARNING_VIBERATE_MILISECONDS = 500;
 
