@@ -275,14 +275,13 @@ public class AppData {
                 if(user.getUserNo() == this.getUserNo()) {
                     continue;
                 }
-                float[] f = new float[3];
-                Location.distanceBetween(user.getLatitude() , user.getLongitude() , AppConfig.PRISON_LATITUDE , AppConfig.PRISON_LONGITUDE , f);
-                if(f[0] < 30) {
+                if( this.getDistanceWithMe(user.getLatitude() , user.getLongitude()) < 30) {
                     bRevive = true;
                     break;
                 }
             }
-            if(bRevive){
+
+            if(bRevive) {
                 if(mReviveStartTime == null){
                     mReviveStartTime = now;
                 }
@@ -300,7 +299,7 @@ public class AppData {
     }
     public boolean isToastRevive() {return mReviveStartTime != null; }
     public boolean isPrisonWarning() {
-        return mState == User.STATE_CATCHED && this.getDistanceWithMe(AppConfig.PRISON_LATITUDE , AppConfig.PRISON_LONGITUDE) < 50;
+        return mState == User.STATE_CATCHED && this.getDistanceWithMe(AppConfig.PRISON_LATITUDE , AppConfig.PRISON_LONGITUDE) > 50;
     }
 
 
