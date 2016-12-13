@@ -5,8 +5,6 @@
     android:orientation="vertical"
     android:id="@+id/bgTeamChat">
 
-
-
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,7 +38,8 @@
         android:layout_marginBottom="31dp"
         android:layout_above="@+id/btnTeamChatSend"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:id="@+id/loTeamChat">
         <ListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

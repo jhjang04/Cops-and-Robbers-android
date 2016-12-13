@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,25 +56,25 @@ public class GlobalChatActivity extends FragmentActivity {
         listView = (ListView) findViewById(R.id.lvGlobalChat);
 //        layout = (RelativeLayout) findViewById(R.id.bgGlobalChat);
 
+         //hide keyboard when touching background
+        listView.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                return false;
+            }
+        });
+
         // hide keyboard when touching background
-//        listView.setOnTouchListener(new View.OnTouchListener(){
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-//                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-//                return false;
-//            }
-//        });
-//
-//        // hide keyboard when touching background
-//        findViewById(R.id.bgGlobalChat).setOnTouchListener(new View.OnTouchListener(){
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-//                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-//                return false;
-//            }
-//        });
+        findViewById(R.id.bgGlobalChat).setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                return false;
+            }
+        });
 
 
         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.activity_chat_singlemessage);
