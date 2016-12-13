@@ -167,6 +167,7 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
     private void drawMakers(){
         int markerAlly = NMapPOIflagType.ALLY; //마커 id설정
         int markerOpponent = NMapPOIflagType.OPPONENT;
+        int markerPrison = NMapPOIflagType.PRISON;
         // POI 아이템 관리 클래스 생성(전체 아이템 수, NMapResourceProvider 상속 클래스)
 
         AppData data = AppData.getInstance(getApplicationContext());
@@ -176,6 +177,12 @@ public class GameActivity extends NMapActivity implements NMapView.OnMapStateCha
         NMapPOIdata poiData = new NMapPOIdata(cops.size() + robbers.size(), mMapViewerResourceProvider);
         poiData.removeAllPOIdata();
         poiData.beginPOIdata(cops.size() + robbers.size() - 1); // POI 아이템 추가 시작
+
+        ///////////// test///////
+        poiData.addPOIitem(127.081667, 37.242222, "", markerPrison, 0);
+        //////////////////////
+
+
         for(int i=0 ; i<cops.size() ; i++){
             User user = cops.get(i);
             if(user.getUserNo() == data.getUserNo()){
